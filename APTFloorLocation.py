@@ -102,4 +102,4 @@ except KeyboardInterrupt:
                                                    /$$  | $$              
                                                   |  $$$$$$/              
                                                    \______/               
-    """ + Style.RESET_ALL))
+    """ + Style.RESET_ALL)
