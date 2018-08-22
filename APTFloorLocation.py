@@ -89,7 +89,6 @@ def sendToCSV():
     with open('moves.csv', 'a') as csvfile:
         csvWriter = csv.writer(csvfile, delimiter=',')
         total = len(bins) + 2
-        print(total)
         max = 8
         if total < max:
             while total < max:
