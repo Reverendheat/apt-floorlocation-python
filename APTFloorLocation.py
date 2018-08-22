@@ -4,21 +4,21 @@ from colorama import Fore, Back, Style
 init()
 
 title = """
-  /$$$$$$  /$$$$$$$  /$$$$$$$$       /$$$$$$$  /$$$$$$ /$$   /$$       /$$                                       /$$     /$$                    
- /$$__  $$| $$__  $$|__  $$__/      | $$__  $$|_  $$_/| $$$ | $$      | $$                                      | $$    |__/                    
-| $$  \ $$| $$  \ $$   | $$         | $$  \ $$  | $$  | $$$$| $$      | $$        /$$$$$$   /$$$$$$$  /$$$$$$  /$$$$$$   /$$  /$$$$$$  /$$$$$$$ 
-| $$$$$$$$| $$$$$$$/   | $$         | $$$$$$$   | $$  | $$ $$ $$      | $$       /$$__  $$ /$$_____/ |____  $$|_  $$_/  | $$ /$$__  $$| $$__  $$
-| $$__  $$| $$____/    | $$         | $$__  $$  | $$  | $$  $$$$      | $$      | $$  \ $$| $$        /$$$$$$$  | $$    | $$| $$  \ $$| $$  \ $$
-| $$  | $$| $$         | $$         | $$  \ $$  | $$  | $$\  $$$      | $$      | $$  | $$| $$       /$$__  $$  | $$ /$$| $$| $$  | $$| $$  | $$
-| $$  | $$| $$         | $$         | $$$$$$$/ /$$$$$$| $$ \  $$      | $$$$$$$$|  $$$$$$/|  $$$$$$$|  $$$$$$$  |  $$$$/| $$|  $$$$$$/| $$  | $$
-|__/  |__/|__/         |__/         |_______/ |______/|__/  \__/      |________/ \______/  \_______/ \_______/   \___/  |__/ \______/ |__/  |__/
+ /$$      /$$           /$$                                            
+| $$  /$ | $$          | $$                                            
+| $$ /$$$| $$  /$$$$$$ | $$  /$$$$$$$  /$$$$$$  /$$$$$$/$$$$   /$$$$$$ 
+| $$/$$ $$ $$ /$$__  $$| $$ /$$_____/ /$$__  $$| $$_  $$_  $$ /$$__  $$
+| $$$$_  $$$$| $$$$$$$$| $$| $$      | $$  \ $$| $$ \ $$ \ $$| $$$$$$$$
+| $$$/ \  $$$| $$_____/| $$| $$      | $$  | $$| $$ | $$ | $$| $$_____/
+| $$/   \  $$|  $$$$$$$| $$|  $$$$$$$|  $$$$$$/| $$ | $$ | $$|  $$$$$$$
+|__/     \__/ \_______/|__/ \_______/ \______/ |__/ |__/ |__/ \_______/
      """
 mainInput = ""
 bins = []
 sourceLocation = ""
 destinationLocation = ""
 tempString = ""
-locationWords = ["FLC","SKIDLINE","SHIPPING", "ASSEMBLY"]
+locationWords = ["*","FLC","SKIDLINE","SHIPPING", "ASSEMBLY"]
 binPop = ""
 removeBin = "REMOVELASTBIN"
 removeSource = "REMOVESOURCE"
@@ -29,7 +29,7 @@ def mainFunction():
     global sourceLocation
     global destinationLocation
     global tempString
-    mainInput = input(Fore.BLUE + Style.BRIGHT + "Please scan the source floor location or your bins: " + Style.RESET_ALL)
+    mainInput = input(Fore.BLUE + Style.BRIGHT + "Please scan the source floor location or your bins: \n" + Style.RESET_ALL)
     if (removeBin in mainInput):
         if (bins):
             bins.pop()
