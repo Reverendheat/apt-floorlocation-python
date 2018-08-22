@@ -54,24 +54,28 @@ def mainFunction():
             print(Fore.RED + Style.BRIGHT + "That bin already has been scanned!")
             mainFunction()
         else:
-            bins.append(mainInput)
-            tempString = ""
-            for x in range(len(bins)):
-                tempString += (bins[x] + ",")
-            print(Fore.GREEN + Style.BRIGHT + tempString)
-            mainFunction()
+            if len(bins) == 6:
+                print(Fore.RED + Style.BRIGHT + "You are carrying to many bins, please scan your source and destination location" + Style.RESET_ALL)
+                mainFunction()
+            else:
+                bins.append(mainInput)
+                tempString = ""
+                for x in range(len(bins)):
+                    tempString += (bins[x] + ",")
+                print(Fore.GREEN + Style.BRIGHT + tempString)
+                mainFunction()
     elif (not sourceLocation):
-        sourceLocation = mainInput
-        print (Fore.GREEN + Style.BRIGHT + "Source location is: " + mainInput + Style.RESET_ALL)
+        sourceLocation = "S" + mainInput
+        print (Fore.GREEN + Style.BRIGHT + "Source location is: " + sourceLocation + Style.RESET_ALL)
         mainFunction()
     elif (not bins):
         print(Fore.YELLOW + Style.BRIGHT + "Please scan bins before scanning your destination floor location!")
         mainFunction()
-    elif (sourceLocation == mainInput):
+    elif (sourceLocation == "S" + mainInput):
         print(Fore.RED + Style.BRIGHT + "Your source and destination cannot be the same!")
         mainFunction()
     else:
-        destinationLocation = mainInput
+        destinationLocation = "F" + mainInput
         print (Fore.GREEN + Style.BRIGHT + tempString + " moved from " + sourceLocation + " to " + destinationLocation)
         sendToCSV()
         mainInput = ""
@@ -84,6 +88,13 @@ def mainFunction():
 def sendToCSV():
     with open('moves.csv', 'a') as csvfile:
         csvWriter = csv.writer(csvfile, delimiter=',')
+        total = len(bins) + 2
+        print(total)
+        max = 8
+        if total < max:
+            while total < max:
+                bins.append('')
+                total = total + 1
         bins.append(sourceLocation)
         bins.append(destinationLocation)
         csvWriter.writerow(bins)
