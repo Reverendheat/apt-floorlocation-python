@@ -1,8 +1,16 @@
 import csv
+import json
+import sqlite3
 from colorama import init
 from colorama import Fore, Back, Style
 init()
 
+db = sqlite3.connect('floorlocation.db')
+cursor = db.cursor()
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS moves (
+        bin1 TEXT, bin2 TEXT, bin3 TEXT, bin4 TEXT, bin5 TEXT, bin6 TEXT, source TEXT, destination TEXT)
+''')
 title = """
  /$$      /$$           /$$                                            
 | $$  /$ | $$          | $$                                            
@@ -22,6 +30,7 @@ locationWords = ["*","FLC","SKIDLINE","SHIPPING", "ASSEMBLY"]
 binPop = ""
 removeBin = "REMOVELASTBIN"
 removeSource = "REMOVESOURCE"
+removeLastLine = "REMOVELAST"
 print(Fore.GREEN + title + Style.RESET_ALL)
 def mainFunction():
     global mainInput
@@ -46,6 +55,9 @@ def mainFunction():
     elif (removeSource in mainInput):
         sourceLocation = ""
         print(Fore.YELLOW + Style.BRIGHT + "Source location has been reset")
+        mainFunction()
+    elif (removeLastLine in mainInput):
+        removeLastLineSQL()
         mainFunction()
     elif not any(word in mainInput for word in locationWords):
         if (not mainInput):
@@ -77,14 +89,27 @@ def mainFunction():
     else:
         destinationLocation = "F" + mainInput
         print (Fore.GREEN + Style.BRIGHT + tempString + " moved from " + sourceLocation + " to " + destinationLocation)
-        sendToCSV()
+        sendToSQL()
         mainInput = ""
         bins = []
         sourceLocation = ""
         destinationLocation = ""
         tempString = ""
         mainFunction()
-
+def sendToSQL():
+    total = len(bins) + 2
+    max = 8
+    if total < max:
+        while total < max:
+            bins.append('')
+            total = total + 1
+    bins.append(sourceLocation)
+    bins.append(destinationLocation)
+    cursor.execute('INSERT INTO moves(bin1,bin2,bin3,bin4,bin5,bin6,source,destination) VALUES(?,?,?,?,?,?,?,?)',bins)
+    db.commit() 
+def removeLastLineSQL():
+    cursor.execute('DELETE FROM moves WHERE rowid = (SELECT MAX(rowid) FROM moves);')
+    db.commit()
 def sendToCSV():
     with open('moves.csv', 'a') as csvfile:
         csvWriter = csv.writer(csvfile, delimiter=',')
