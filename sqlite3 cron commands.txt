@@ -1,0 +1,2 @@
+sqlite3 -csv floorlocation.db "SELECT * FROM moves;" > moves.db
+sqlite3 floorlocation.db "DELETE FROM moves;"

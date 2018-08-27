@@ -1,5 +1,4 @@
 import csv
-import json
 import sqlite3
 from colorama import init
 from colorama import Fore, Back, Style
@@ -26,7 +25,7 @@ bins = []
 sourceLocation = ""
 destinationLocation = ""
 tempString = ""
-locationWords = ["*","FLC","SKIDLINE","SHIPPING", "ASSEMBLY"]
+locationWords = ["*","FLC"]
 binPop = ""
 removeBin = "REMOVELASTBIN"
 removeSource = "REMOVESOURCE"
@@ -38,7 +37,10 @@ def mainFunction():
     global sourceLocation
     global destinationLocation
     global tempString
-    mainInput = input(Fore.BLUE + Style.BRIGHT + "Please scan the source floor location or your bins: \n" + Style.RESET_ALL)
+    if (not sourceLocation):
+        mainInput = input(Fore.BLUE + Style.BRIGHT + "Please scan the source floor location or your bins: \n" + Style.RESET_ALL)
+    else:
+        mainInput = input(Fore.BLUE + Style.BRIGHT + "Please scan the destination floor location or your bins: \n" + Style.RESET_ALL)
     if (removeBin in mainInput):
         if (bins):
             bins.pop()
@@ -87,7 +89,7 @@ def mainFunction():
         print(Fore.RED + Style.BRIGHT + "Your source and destination cannot be the same!")
         mainFunction()
     else:
-        destinationLocation = "F" + mainInput
+        destinationLocation = "E" + mainInput
         print (Fore.GREEN + Style.BRIGHT + tempString + " moved from " + sourceLocation + " to " + destinationLocation)
         sendToSQL()
         mainInput = ""
@@ -110,6 +112,7 @@ def sendToSQL():
 def removeLastLineSQL():
     cursor.execute('DELETE FROM moves WHERE rowid = (SELECT MAX(rowid) FROM moves);')
     db.commit()
+    print(Fore.YELLOW + Style.BRIGHT + "Your previous entry has been removed!" + Style.RESET_ALL)
 def sendToCSV():
     with open('moves.csv', 'a') as csvfile:
         csvWriter = csv.writer(csvfile, delimiter=',')
