@@ -8,7 +8,7 @@ db = sqlite3.connect('floorlocation.db')
 cursor = db.cursor()
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS moves (
-        bin1 TEXT, bin2 TEXT, bin3 TEXT, bin4 TEXT, bin5 TEXT, bin6 TEXT, source TEXT, destination TEXT)
+        bin1 INTEGER, bin2 INTEGER, bin3 INTEGER, bin4 INTEGER, bin5 INTEGER, bin6 INTEGER, source TEXT, destination TEXT)
 ''')
 title = """
  /$$      /$$           /$$                                            
@@ -27,9 +27,14 @@ destinationLocation = ""
 tempString = ""
 locationWords = ["*","FLC"]
 binPop = ""
+
+#COMMANDS
 removeBin = "REMOVELASTBIN"
 removeSource = "REMOVESOURCE"
 removeLastLine = "REMOVELAST"
+clearInput = "CLEARINPUT"
+startOver = "STARTOVER"
+
 print(Fore.GREEN + title + Style.RESET_ALL)
 def mainFunction():
     global mainInput
@@ -60,6 +65,16 @@ def mainFunction():
         mainFunction()
     elif (removeLastLine in mainInput):
         removeLastLineSQL()
+        mainFunction()
+    elif (clearInput in mainInput):
+        mainInput = ""
+        print(Fore.YELLOW + Style.BRIGHT + "You just cleared the input")
+        mainFunction()
+    elif (startOver in mainInput):
+        bins[:] = []
+        sourceLocation = ""
+        destinationLocation = ""
+        print(Fore.YELLOW + Style.BRIGHT + "You just cleared the current session")
         mainFunction()
     elif not any(word in mainInput for word in locationWords):
         if (not mainInput):
