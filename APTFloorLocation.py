@@ -8,7 +8,7 @@ db = sqlite3.connect('floorlocation.db')
 cursor = db.cursor()
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS moves (
-        bin1 INTEGER, bin2 INTEGER, bin3 INTEGER, bin4 INTEGER, bin5 INTEGER, bin6 INTEGER, source TEXT, destination TEXT)
+        bin1 INTEGER, bin2 INTEGER, bin3 INTEGER, bin4 INTEGER, source TEXT, destination TEXT)
 ''')
 title = """
  /$$      /$$           /$$                                            
@@ -79,20 +79,41 @@ def mainFunction():
     elif not any(word in mainInput for word in locationWords):
         if (not mainInput):
             mainFunction()
-        elif (mainInput in bins):
-            print(Fore.RED + Style.BRIGHT + "That bin already has been scanned!")
-            mainFunction()
+        #elif (mainInput in bins):
+        #    print(Fore.RED + Style.BRIGHT + "That bin already has been scanned!")
+        #    mainFunction()
         else:
-            if len(bins) == 6:
+            if len(bins) == 4:
                 print(Fore.RED + Style.BRIGHT + "You are carrying to many bins, please scan your source and destination location" + Style.RESET_ALL)
                 mainFunction()
             else:
-                bins.append(mainInput)
-                tempString = ""
-                for x in range(len(bins)):
-                    tempString += (bins[x] + ",")
-                print(Fore.GREEN + Style.BRIGHT + tempString)
-                mainFunction()
+                fullInput = input(Fore.BLUE + Style.BRIGHT + "Is this a full stack? Press 1 for Yes | 2 for No | 3 for bin: \n" + Style.RESET_ALL)
+                if "1" in fullInput:
+                    print("this is a full stack")
+                    bins.append(mainInput + ":" + "FULL")
+                    tempString = ""
+                    for x in range(len(bins)):
+                        tempString += (bins[x] + ",")
+                    print(Fore.GREEN + Style.BRIGHT + tempString)
+                    mainFunction()
+                elif "2" in fullInput:
+                    partialInput = input(Fore.BLUE + Style.BRIGHT + "Enter the number of units in this stack: \n" + Style.RESET_ALL)
+                    bins.append(mainInput + ":" + partialInput)
+                    tempString = ""
+                    for x in range(len(bins)):
+                        tempString += (bins[x] + ",")
+                    print(Fore.GREEN + Style.BRIGHT + tempString)
+                    mainFunction()
+                elif "3" in fullInput:
+                    bins.append(mainInput)
+                    tempString = ""
+                    for x in range(len(bins)):
+                        tempString += (bins[x] + ",")
+                    print(Fore.GREEN + Style.BRIGHT + tempString)
+                    mainFunction()
+                else:
+                    print(Fore.YELLOW + Style.BRIGHT + fullInput + " is not an option, please scan your stack or bin again")
+                    mainFunction()
     elif (not sourceLocation):
         sourceLocation = "S" + mainInput
         print (Fore.GREEN + Style.BRIGHT + "Source location is: " + sourceLocation + Style.RESET_ALL)
@@ -115,14 +136,14 @@ def mainFunction():
         mainFunction()
 def sendToSQL():
     total = len(bins) + 2
-    max = 8
+    max = 6
     if total < max:
         while total < max:
             bins.append('')
             total = total + 1
     bins.append(sourceLocation)
     bins.append(destinationLocation)
-    cursor.execute('INSERT INTO moves(bin1,bin2,bin3,bin4,bin5,bin6,source,destination) VALUES(?,?,?,?,?,?,?,?)',bins)
+    cursor.execute('INSERT INTO moves(bin1,bin2,bin3,bin4,source,destination) VALUES(?,?,?,?,?,?)',bins)
     db.commit() 
 def removeLastLineSQL():
     cursor.execute('DELETE FROM moves WHERE rowid = (SELECT MAX(rowid) FROM moves);')
