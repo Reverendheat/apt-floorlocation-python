@@ -1,5 +1,6 @@
 import csv
 import sqlite3
+import datetime
 from colorama import init
 from colorama import Fore, Back, Style
 init()
@@ -8,7 +9,7 @@ db = sqlite3.connect('floorlocation.db')
 cursor = db.cursor()
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS moves (
-        bin1 INTEGER, bin2 INTEGER, bin3 INTEGER, bin4 INTEGER, source TEXT, destination TEXT)
+        date text, bin1 INTEGER, bin2 INTEGER, bin3 INTEGER, bin4 INTEGER, source TEXT, destination TEXT)
 ''')
 title = """
  /$$      /$$           /$$                                            
@@ -137,13 +138,15 @@ def mainFunction():
 def sendToSQL():
     total = len(bins) + 2
     max = 6
-    if total < max:
+    if total < max: 
         while total < max:
             bins.append('')
             total = total + 1
     bins.append(sourceLocation)
     bins.append(destinationLocation)
-    cursor.execute('INSERT INTO moves(bin1,bin2,bin3,bin4,source,destination) VALUES(?,?,?,?,?,?)',bins)
+    bins.insert(0,'{0:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now()))
+    print(bins)
+    cursor.execute('INSERT INTO moves(date,bin1,bin2,bin3,bin4,source,destination) VALUES(?,?,?,?,?,?,?)',bins)
     db.commit() 
 def removeLastLineSQL():
     cursor.execute('DELETE FROM moves WHERE rowid = (SELECT MAX(rowid) FROM moves);')
