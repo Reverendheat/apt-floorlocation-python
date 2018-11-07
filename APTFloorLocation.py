@@ -144,7 +144,9 @@ def sendToSQL():
             total = total + 1
     bins.append(sourceLocation)
     bins.append(destinationLocation)
-    bins.insert(0,'{0:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now()))
+    theTime = '{0:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
+    theTime.replace("'",'')
+    bins.insert(0,theTime)
     print(bins)
     cursor.execute('INSERT INTO moves(date,bin1,bin2,bin3,bin4,source,destination) VALUES(?,?,?,?,?,?,?)',bins)
     db.commit() 

@@ -2,6 +2,7 @@ now=`date '+%Y%m%d%H%M%S'`
 filename="/home/pi/movesA${now}.csv"
 echo $filename
 sqlite3 -csv /home/pi/floorlocation.db "SELECT * FROM moves;" > $filename
+sed -i 's/\"//g' $filename
 if [ -z "$(ls -A /mnt/csvMove)" ]
 then
         echo "Folders Empty, trying to mount, or check if DONTREMOVE.txt is missing from newmas share. Will try to copy again in one minute"
