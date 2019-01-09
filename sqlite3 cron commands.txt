@@ -1,4 +1,9 @@
+install sqlite3 command line tools
+	sudo apt-get install sqlite3
+
 sqlite3 -csv floorlocation.db "SELECT * FROM moves;" > movesCURRENTDATE.csv
 sqlite3 floorlocation.db "DELETE FROM moves;"
 copy movesCURRENTDATE.csv to \\newmas\Floorlocations\incomingfiles\
+
+sudo crontab -e
 
