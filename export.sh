@@ -1,7 +1,8 @@
 now=`date '+%Y%m%d%H%M%S'`
-filename="/home/pi/A${now}.csv"
-echo $filename
+host = ${HOSTNAME: -3}
+filename="/home/pi/$host${now}.csv"
 echo `date`
+echo $filename
 sqlite3 -csv /home/pi/floorlocation.db "SELECT * FROM moves;" > $filename
 sed -i "s/\"//g" $filename
 if [ -z "$(ls -A /mnt/csvMove)" ]
