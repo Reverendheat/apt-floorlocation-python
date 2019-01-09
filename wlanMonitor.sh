@@ -1,5 +1,5 @@
 #!/bin/bash
-if ifconfig wlan0 | grep -q "inet 10" ; then
+if ifconfig wlan0 | grep -q "inet 10\|inet 192\|inet 172" ; then
 	echo "Seems ok"
 	echo `date`
 else
