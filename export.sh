@@ -42,4 +42,4 @@ then
 else
 	echo "No csv files exist currently in /home/pi/"
 fi
-echo "\n"
+echo
