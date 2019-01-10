@@ -7,8 +7,8 @@ else
 	echo `date`
 	echo "Network is down again, attempting to rejoin"
 	echo
-	sudo ifdown wlan0
+	sudo ifconfig wlan0 down
 	sleep 10
-	sudo ifup --force wlan0
+	sudo ifconfig wlan0 up
 	sleep 10
 fi
