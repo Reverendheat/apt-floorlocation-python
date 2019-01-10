@@ -3,8 +3,6 @@ now=`date '+%Y%m%d%H%M%S'`
 filename="/home/pi/${HOSTNAME: -3}${now}.csv"
 echo `date`
 echo $filename
-sqlite3 -csv /home/pi/floorlocation.db "SELECT * FROM moves;" > $filename
-sed -i "s/\"//g" $filename
 if [ -z "$(ls -A /mnt/csvMove)" ]
 then
 	if [ ! -d /mnt/csvMove/ ]
@@ -15,6 +13,8 @@ then
         sudo mount -t cifs //NEWMAS/FloorLocations/IncomingFiles/ /mnt/csvMove/ -o user=FLocations,password=APT.248.YEAH.BOI
 else
         echo "/mnt/csvMove not empty, attempting to copy"
+	sqlite3 -csv /home/pi/floorlocation.db "SELECT * FROM moves;" > $filename
+	sed -i "s/\"//g" $filename
         if [ -s $filename ]
         then
                 echo "$filename isnt empty, trying to copy and wipe database"
