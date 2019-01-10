@@ -20,7 +20,7 @@ title = """
 | $$$/ \  $$$| $$_____/| $$| $$      | $$  | $$| $$ | $$ | $$| $$_____/
 | $$/   \  $$|  $$$$$$$| $$|  $$$$$$$|  $$$$$$/| $$ | $$ | $$|  $$$$$$$
 |__/     \__/ \_______/|__/ \_______/ \______/ |__/ |__/ |__/ \_______/
-    								Version: 1.0.0
+    								Version: 1.0.1
 	 """
 mainInput = ""
 bins = []
@@ -90,7 +90,7 @@ def mainFunction():
                 mainFunction()
             else:
                 fullInput = input(Fore.BLUE + Style.BRIGHT + "Is this a full stack? Press 1 for Yes | 2 for No | 3 for bin: \n" + Style.RESET_ALL)
-                if "1" in fullInput:
+                if "1" == fullInput:
                     print("this is a full stack")
                     bins.append(mainInput + ":" + "FULL")
                     tempString = ""
@@ -98,7 +98,7 @@ def mainFunction():
                         tempString += (bins[x] + ",")
                     print(Fore.GREEN + Style.BRIGHT + tempString)
                     mainFunction()
-                elif "2" in fullInput:
+                elif "2" == fullInput:
                     partialInput = input(Fore.BLUE + Style.BRIGHT + "Enter the number of units in this stack: \n" + Style.RESET_ALL)
                     bins.append(mainInput + ":" + partialInput)
                     tempString = ""
@@ -106,12 +106,28 @@ def mainFunction():
                         tempString += (bins[x] + ",")
                     print(Fore.GREEN + Style.BRIGHT + tempString)
                     mainFunction()
-                elif "3" in fullInput:
+                elif "3" == fullInput:
                     bins.append(mainInput)
                     tempString = ""
                     for x in range(len(bins)):
                         tempString += (bins[x] + ",")
                     print(Fore.GREEN + Style.BRIGHT + tempString)
+                    mainFunction()
+                elif (startOver in fullInput):
+                    bins[:] = []
+                    sourceLocation = ""
+                    destinationLocation = ""
+                    tempString = ""
+                    print(Fore.YELLOW + Style.BRIGHT + "You just cleared the current session")
+                    mainFunction()
+                elif (clearInput in fullInput):
+                    mainInput = ""
+                    tempString = ""
+                    print(Fore.YELLOW + Style.BRIGHT + "You just cleared the input")
+                    if len(bins) > 0:
+                        for x in range(len(bins)):
+                            tempString += (bins[x] + ",")
+                        print(Fore.GREEN + Style.BRIGHT + tempString + " in your current session.")
                     mainFunction()
                 else:
                     print(Fore.YELLOW + Style.BRIGHT + fullInput + " is not an option, please scan your stack or bin again")
@@ -128,8 +144,8 @@ def mainFunction():
         mainFunction()
     else:
         destinationLocation = "E" + mainInput
-        print (Fore.GREEN + Style.BRIGHT + tempString + " moved from " + sourceLocation + " to " + destinationLocation)
         sendToSQL()
+        print (Fore.GREEN + Style.BRIGHT + tempString + " moved from " + sourceLocation + " to " + destinationLocation)
         mainInput = ""
         bins = []
         sourceLocation = ""
@@ -152,9 +168,11 @@ def sendToSQL():
     cursor.execute('INSERT INTO moves(date,bin1,bin2,bin3,bin4,source,destination) VALUES(?,?,?,?,?,?,?)',bins)
     db.commit() 
 def removeLastLineSQL():
+    cursor.execute('SELECT * FROM moves ORDER BY rowid DESC LIMIT 1;')
+    result = str(cursor.fetchone())
+    print(Fore.YELLOW + Style.BRIGHT + "Removing " + result + Style.RESET_ALL)
     cursor.execute('DELETE FROM moves WHERE rowid = (SELECT MAX(rowid) FROM moves);')
     db.commit()
-    print(Fore.YELLOW + Style.BRIGHT + "Your previous entry has been removed!" + Style.RESET_ALL)
 def sendToCSV():
     with open('moves.csv', 'a') as csvfile:
         csvWriter = csv.writer(csvfile, delimiter=',')
