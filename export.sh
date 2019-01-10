@@ -1,6 +1,5 @@
 now=`date '+%Y%m%d%H%M%S'`
-host = ${HOSTNAME: -3}
-filename="/home/pi/A$now.csv"
+filename="/home/pi/${HOSTNAME: -3}${now}.csv"
 echo `date`
 echo $filename
 sqlite3 -csv /home/pi/floorlocation.db "SELECT * FROM moves;" > $filename
