@@ -1,3 +1,4 @@
+#!/bin/bash
 now=`date '+%Y%m%d%H%M%S'`
 filename="/home/pi/${HOSTNAME: -3}${now}.csv"
 echo `date`
