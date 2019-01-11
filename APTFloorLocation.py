@@ -27,7 +27,7 @@ else:
         print(Fore.GREEN + Style.BRIGHT + "Database up to date")
 
 #Variable declaration
-title = "APT Floor Tracking Version: 1.1.1"
+title = "APT Floor Tracking Version: 1.1.2"
 mainInput = ""
 bins = []
 sourceLocation = ""
