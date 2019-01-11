@@ -5,13 +5,29 @@ from colorama import init
 from colorama import Fore, Back, Style
 init()
 
+#Connect to local DB
 db = sqlite3.connect('floorlocation.db')
 cursor = db.cursor()
-cursor.execute('''
+
+#Check to see if new column for cartnumbers exist, if not add it
+cursor.execute('PRAGMA table_info(moves);')
+columnInfo = cursor.fetchall()
+if  len(columnInfo) == 0:
+    cursor.execute('''
     CREATE TABLE IF NOT EXISTS moves (
         date text, bin1 INTEGER, bin2 INTEGER, bin3 INTEGER, bin4 INTEGER, source TEXT, destination TEXT, cart INTEGER)
-''')
-title = "APT Floor Tracking Version: 1.1.0"
+    ''')
+    print(Fore.YELLOW + Style.BRIGHT + "Created new FloorLocation Database")
+else:
+    lastColumn = columnInfo[-1][1]
+    if lastColumn != "cart":
+        cursor.execute('ALTER TABLE moves ADD COLUMN cart INTEGER')
+        print(Fore.YELLOW + Style.BRIGHT + "Added cart column to existing FloorLocation Database")
+    else:
+        print(Fore.GREEN + Style.BRIGHT + "Database up to date")
+
+#Variable declaration
+title = "APT Floor Tracking Version: 1.1.1"
 mainInput = ""
 bins = []
 sourceLocation = ""
@@ -28,6 +44,7 @@ removeLastLine = "REMOVELAST"
 clearInput = "CLEARINPUT"
 startOver = "STARTOVER"
 
+#Main loop
 print(Fore.GREEN + title + Style.RESET_ALL)
 def mainFunction():
     global mainInput
