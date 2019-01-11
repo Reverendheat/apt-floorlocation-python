@@ -11,17 +11,7 @@ cursor.execute('''
     CREATE TABLE IF NOT EXISTS moves (
         date text, bin1 INTEGER, bin2 INTEGER, bin3 INTEGER, bin4 INTEGER, source TEXT, destination TEXT)
 ''')
-title = """
- /$$      /$$           /$$                                            
-| $$  /$ | $$          | $$                                            
-| $$ /$$$| $$  /$$$$$$ | $$  /$$$$$$$  /$$$$$$  /$$$$$$/$$$$   /$$$$$$ 
-| $$/$$ $$ $$ /$$__  $$| $$ /$$_____/ /$$__  $$| $$_  $$_  $$ /$$__  $$
-| $$$$_  $$$$| $$$$$$$$| $$| $$      | $$  \ $$| $$ \ $$ \ $$| $$$$$$$$
-| $$$/ \  $$$| $$_____/| $$| $$      | $$  | $$| $$ | $$ | $$| $$_____/
-| $$/   \  $$|  $$$$$$$| $$|  $$$$$$$|  $$$$$$/| $$ | $$ | $$|  $$$$$$$
-|__/     \__/ \_______/|__/ \_______/ \______/ |__/ |__/ |__/ \_______/
-    								Version: 1.0.1
-	 """
+title = "APT Floor Tracking Version: 1.0.2"
 mainInput = ""
 bins = []
 sourceLocation = ""
@@ -164,7 +154,6 @@ def sendToSQL():
     theTime = '{0:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
     theTime.replace("'",'')
     bins.insert(0,theTime)
-    print(bins)
     cursor.execute('INSERT INTO moves(date,bin1,bin2,bin3,bin4,source,destination) VALUES(?,?,?,?,?,?,?)',bins)
     db.commit() 
 def removeLastLineSQL():
@@ -188,16 +177,4 @@ def sendToCSV():
 try:
     mainFunction()
 except KeyboardInterrupt:
-    print(Fore.RED + """
-  /$$$$$$                            /$$ /$$                           /$$
- /$$__  $$                          | $$| $$                          | $$
-| $$  \__/  /$$$$$$   /$$$$$$   /$$$$$$$| $$$$$$$  /$$   /$$  /$$$$$$ | $$
-| $$ /$$$$ /$$__  $$ /$$__  $$ /$$__  $$| $$__  $$| $$  | $$ /$$__  $$| $$
-| $$|_  $$| $$  \ $$| $$  \ $$| $$  | $$| $$  \ $$| $$  | $$| $$$$$$$$|__/
-| $$  \ $$| $$  | $$| $$  | $$| $$  | $$| $$  | $$| $$  | $$| $$_____/    
-|  $$$$$$/|  $$$$$$/|  $$$$$$/|  $$$$$$$| $$$$$$$/|  $$$$$$$|  $$$$$$$ /$$
- \______/  \______/  \______/  \_______/|_______/  \____  $$ \_______/|__/
-                                                   /$$  | $$              
-                                                  |  $$$$$$/              
-                                                   \______/               
-    """ + Style.RESET_ALL)
+    print(Fore.RED + "Exiting, goodbye!" + Style.RESET_ALL)
