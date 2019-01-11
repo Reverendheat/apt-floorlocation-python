@@ -66,7 +66,7 @@ def mainFunction():
                 print(Fore.RED + Style.BRIGHT + "Cart numbers must be two digits...")
                 cartNumber = 0
                 mainFunction()
-            print(Fore.GREEN + Style.BRIGHT + "Welcome cart " + str(cartNumber) + Style.RESET_ALL)
+        print(Fore.GREEN + Style.BRIGHT + "Welcome cart " + str(cartNumber) + Style.RESET_ALL)
     if (not sourceLocation):
         mainInput = input(Fore.BLUE + Style.BRIGHT + "Please scan the source floor location or your bins: \n" + Style.RESET_ALL)
     else:
