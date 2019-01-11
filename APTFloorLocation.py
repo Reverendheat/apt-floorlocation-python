@@ -9,9 +9,9 @@ db = sqlite3.connect('floorlocation.db')
 cursor = db.cursor()
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS moves (
-        date text, bin1 INTEGER, bin2 INTEGER, bin3 INTEGER, bin4 INTEGER, source TEXT, destination TEXT)
+        date text, bin1 INTEGER, bin2 INTEGER, bin3 INTEGER, bin4 INTEGER, source TEXT, destination TEXT, cart INTEGER)
 ''')
-title = "APT Floor Tracking Version: 1.0.2"
+title = "APT Floor Tracking Version: 1.1.0"
 mainInput = ""
 bins = []
 sourceLocation = ""
@@ -19,6 +19,7 @@ destinationLocation = ""
 tempString = ""
 locationWords = ["*","FLC"]
 binPop = ""
+cartNumber = 0
 
 #COMMANDS
 removeBin = "REMOVELASTBIN"
@@ -34,6 +35,21 @@ def mainFunction():
     global sourceLocation
     global destinationLocation
     global tempString
+    global cartNumber
+    if cartNumber == 0:
+        cartVal = input(Fore.BLUE + Style.BRIGHT + "Please enter your cart number: \n" + Style.RESET_ALL)
+        try:
+            cartNumber = int(cartVal)
+        except:
+            print(Fore.RED + Style.BRIGHT + "It looks like that is not a number...")
+            cartNumber = 0
+            mainFunction()
+        finally:
+            if (cartNumber < 10) or (cartNumber > 99):
+                print(Fore.RED + Style.BRIGHT + "Cart numbers must be two digits...")
+                cartNumber = 0
+                mainFunction()
+            print(Fore.GREEN + Style.BRIGHT + "Welcome cart " + str(cartNumber) + Style.RESET_ALL)
     if (not sourceLocation):
         mainInput = input(Fore.BLUE + Style.BRIGHT + "Please scan the source floor location or your bins: \n" + Style.RESET_ALL)
     else:
@@ -135,7 +151,7 @@ def mainFunction():
     else:
         destinationLocation = "E" + mainInput
         sendToSQL()
-        print (Fore.GREEN + Style.BRIGHT + tempString + " moved from " + sourceLocation + " to " + destinationLocation)
+        print (Fore.GREEN + Style.BRIGHT + tempString + " moved from " + sourceLocation + " to " + destinationLocation + " by cart " + str(cartNumber))
         mainInput = ""
         bins = []
         sourceLocation = ""
@@ -151,10 +167,11 @@ def sendToSQL():
             total = total + 1
     bins.append(sourceLocation)
     bins.append(destinationLocation)
+    bins.append(cartNumber)
     theTime = '{0:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
     theTime.replace("'",'')
     bins.insert(0,theTime)
-    cursor.execute('INSERT INTO moves(date,bin1,bin2,bin3,bin4,source,destination) VALUES(?,?,?,?,?,?,?)',bins)
+    cursor.execute('INSERT INTO moves(date,bin1,bin2,bin3,bin4,source,destination,cart) VALUES(?,?,?,?,?,?,?,?)',bins)
     db.commit() 
 def removeLastLineSQL():
     cursor.execute('SELECT * FROM moves ORDER BY rowid DESC LIMIT 1;')
@@ -173,6 +190,7 @@ def sendToCSV():
                 total = total + 1
         bins.append(sourceLocation)
         bins.append(destinationLocation)
+        bins.append(cartNumber)
         csvWriter.writerow(bins)
 try:
     mainFunction()
