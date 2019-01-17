@@ -44,7 +44,6 @@ removeSource = "REMOVESOURCE"
 removeLastLine = "REMOVELAST"
 clearInput = "CLEARINPUT"
 startOver = "STARTOVER"
-command_list = [removeBin,removeLastLine,removeSource,clearInput,startOver]
 
 #Main loop
 print(Fore.GREEN + title + Style.RESET_ALL)
