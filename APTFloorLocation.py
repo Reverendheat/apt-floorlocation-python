@@ -114,7 +114,6 @@ def mainFunction():
             else:
                 fullInput = input(Fore.BLUE + Style.BRIGHT + "Is this a full stack? Press 1 for Yes | 2 for No | 3 for bin: \n" + Style.RESET_ALL)
                 if "1" == fullInput:
-                    print("this is a full stack")
                     bins.append(mainInput + ":" + "FULL")
                     tempString = ""
                     for x in range(len(bins)):
