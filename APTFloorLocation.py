@@ -27,7 +27,7 @@ else:
         print(Fore.GREEN + Style.BRIGHT + "Database up to date")
 
 #Variable declaration
-title = "APT Floor Tracking Version: 1.1.2"
+title = "APT Floor Tracking Version: 1.2.0"
 mainInput = ""
 bins = []
 sourceLocation = ""
@@ -36,6 +36,7 @@ tempString = ""
 locationWords = ["*","FLC"]
 binPop = ""
 cartNumber = 0
+dcPre = "*DC"
 
 #COMMANDS
 removeBin = "REMOVELASTBIN"
@@ -155,9 +156,15 @@ def mainFunction():
                     print(Fore.YELLOW + Style.BRIGHT + fullInput + " is not an option, please scan your stack or bin again")
                     mainFunction()
     elif (not sourceLocation):
-        sourceLocation = "S" + mainInput
-        print (Fore.GREEN + Style.BRIGHT + "Source location is: " + sourceLocation + Style.RESET_ALL)
-        mainFunction()
+        if dcPre in mainInput:
+            dcInput = input(Fore.BLUE + Style.BRIGHT + "Please type the floor number for the source *DC location: \n" + Style.RESET_ALL)
+            sourceLocation = "S" + dcPre + dcInput
+            print (Fore.GREEN + Style.BRIGHT + "Source location is: " + sourceLocation + Style.RESET_ALL)
+            mainFunction()
+        else:
+            sourceLocation = "S" + mainInput
+            print (Fore.GREEN + Style.BRIGHT + "Source location is: " + sourceLocation + Style.RESET_ALL)
+            mainFunction()
     elif (not bins):
         print(Fore.YELLOW + Style.BRIGHT + "Please scan bins before scanning your destination floor location!")
         mainFunction()
@@ -165,7 +172,11 @@ def mainFunction():
         print(Fore.RED + Style.BRIGHT + "Your source and destination cannot be the same!")
         mainFunction()
     else:
-        destinationLocation = "E" + mainInput
+        if dcPre in mainInput:
+            dcInput = input(Fore.BLUE + Style.BRIGHT + "Please type the floor number for the destination *DC location: \n" + Style.RESET_ALL)
+            destinationLocation = "E" + dcPre + dcInput
+        else:    
+            destinationLocation = "E" + mainInput
         sendToSQL()
         print (Fore.GREEN + Style.BRIGHT + tempString + " moved from " + sourceLocation + " to " + destinationLocation + " by cart " + str(cartNumber))
         mainInput = ""
