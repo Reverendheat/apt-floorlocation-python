@@ -27,7 +27,7 @@ else:
         print(Fore.GREEN + Style.BRIGHT + "Database up to date")
 
 #Variable declaration
-title = "APT Floor Tracking Version: 1.2.0"
+title = "APT Floor Tracking Version: 1.2.1"
 mainInput = ""
 bins = []
 sourceLocation = ""
@@ -44,6 +44,7 @@ removeSource = "REMOVESOURCE"
 removeLastLine = "REMOVELAST"
 clearInput = "CLEARINPUT"
 startOver = "STARTOVER"
+command_list = [removeBin,removeLastLine,removeSource,clearInput,startOver]
 
 #Main loop
 print(Fore.GREEN + title + Style.RESET_ALL)
@@ -158,9 +159,13 @@ def mainFunction():
     elif (not sourceLocation):
         if dcPre in mainInput:
             dcInput = input(Fore.BLUE + Style.BRIGHT + "Please type the floor number for the source *DC location: \n" + Style.RESET_ALL)
-            sourceLocation = "S" + dcPre + dcInput
-            print (Fore.GREEN + Style.BRIGHT + "Source location is: " + sourceLocation + Style.RESET_ALL)
-            mainFunction()
+            if dcInput.isnumeric():
+                sourceLocation = "S" + dcPre + dcInput
+                print (Fore.GREEN + Style.BRIGHT + "Source location is: " + sourceLocation + Style.RESET_ALL)
+                mainFunction()
+            else:
+                print (Fore.RED + Style.BRIGHT + "Sorry, not accepted at this screen, please input a number next time." + Style.RESET_ALL)
+                mainFunction()
         else:
             sourceLocation = "S" + mainInput
             print (Fore.GREEN + Style.BRIGHT + "Source location is: " + sourceLocation + Style.RESET_ALL)
