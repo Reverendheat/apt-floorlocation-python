@@ -3,3 +3,4 @@
 *.db-journal
 *.log
 __pycache__/
+.vscode/
