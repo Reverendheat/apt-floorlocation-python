@@ -10,7 +10,7 @@ async def heartbeat(message, loop):
     writer.close()
 
 hostname = socket.gethostname()
-message = f'{hostname} is online!'
+message = hostname + ' is online!'
 loop = asyncio.get_event_loop()
 loop.run_until_complete(heartbeat(message, loop))
 loop.close()
