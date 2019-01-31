@@ -3,7 +3,7 @@ import asyncio
 import socket
 
 async def heartbeat(message, loop):
-    reader, writer = await asyncio.open_connection('192.168.20.2', 10000,
+    reader, writer = await asyncio.open_connection('wl-scanning', 10000,
                                                    loop=loop)
     writer.write(message.encode())
     data = await reader.read(100)
