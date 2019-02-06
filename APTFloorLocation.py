@@ -15,7 +15,7 @@ columnInfo = cursor.fetchall()
 if  len(columnInfo) == 0:
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS moves (
-        date text, bin1 INTEGER, bin2 INTEGER, bin3 INTEGER, bin4 INTEGER, source TEXT, destination TEXT, cart INTEGER)
+        date TEXT, bin1 INTEGER, bin2 INTEGER, bin3 INTEGER, bin4 INTEGER, source TEXT, destination TEXT, cart INTEGER)
     ''')
     print(Fore.YELLOW + Style.BRIGHT + "Created new FloorLocation Database")
 else:
@@ -27,7 +27,7 @@ else:
         print(Fore.GREEN + Style.BRIGHT + "Database up to date")
 
 #Variable declaration
-title = "APT Floor Tracking Version: 1.2.1"
+title = "APT Floor Tracking Version: 1.2.2"
 mainInput = ""
 bins = []
 sourceLocation = ""
@@ -182,7 +182,6 @@ def mainFunction():
         else:    
             destinationLocation = "E" + mainInput
         sendToSQL()
-        print (Fore.GREEN + Style.BRIGHT + tempString + " moved from " + sourceLocation + " to " + destinationLocation + " by cart " + str(cartNumber))
         mainInput = ""
         bins = []
         sourceLocation = ""
@@ -198,11 +197,21 @@ def sendToSQL():
             total = total + 1
     bins.append(sourceLocation)
     bins.append(destinationLocation)
-    bins.append(cartNumber)
+    #Converting to string so I can loop throw it below and remove special characters
+    bins.append(str(cartNumber))
     theTime = '{0:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
     theTime.replace("'",'')
     bins.insert(0,theTime)
+    #Remove special characters
+    for ch in ['/','+','*','.']:
+        for x in range(len(bins)):
+            if ch in bins[x]:
+                bins[x] = bins[x].replace(ch,'')
     cursor.execute('INSERT INTO moves(date,bin1,bin2,bin3,bin4,source,destination,cart) VALUES(?,?,?,?,?,?,?,?)',bins)
+    #Print out what bins were moved (Always going to be the 1-4 indexes represented by [1:5])
+    for bin in bins[1:5]:
+        if bin:
+            print (Fore.GREEN + Style.BRIGHT + bin + " moved from " + bins[5] + " to " + bins[6] + " by cart " + bins[7])
     db.commit() 
 def removeLastLineSQL():
     cursor.execute('SELECT * FROM moves ORDER BY rowid DESC LIMIT 1;')
