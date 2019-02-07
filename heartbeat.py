@@ -4,7 +4,7 @@ import socket
 from config import settings
 
 async def heartbeat(message, loop):
-    reader, writer = await asyncio.open_connection(settings["DevServer"], settings["Port"],
+    reader, writer = await asyncio.open_connection(settings["Server"], settings["Port"],
                                                    loop=loop)
     writer.write(message.encode())
     data = await reader.read(100)
