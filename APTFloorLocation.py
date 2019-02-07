@@ -5,6 +5,8 @@ from colorama import init
 from colorama import Fore, Back, Style
 init()
 
+from config import settings
+
 #Connect to local DB
 db = sqlite3.connect('floorlocation.db')
 cursor = db.cursor()
@@ -27,7 +29,7 @@ else:
         print(Fore.GREEN + Style.BRIGHT + "Database up to date")
 
 #Variable declaration
-title = "APT Floor Tracking Version: 1.2.2"
+title = "APT Floor Tracking Version: " + settings['Version']
 mainInput = ""
 bins = []
 sourceLocation = ""
