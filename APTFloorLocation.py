@@ -110,6 +110,9 @@ def mainFunction():
         #elif (mainInput in bins):
         #    print(Fore.RED + Style.BRIGHT + "That bin already has been scanned!")
         #    mainFunction()
+        elif (len(mainInput) is not 5):
+            print(Fore.RED + Style.BRIGHT + "This has to be exact 5 characters")
+            mainFunction()
         else:
             if len(bins) == 4:
                 print(Fore.RED + Style.BRIGHT + "You are carrying to many bins, please scan your source and destination location" + Style.RESET_ALL)
