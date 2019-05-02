@@ -110,9 +110,6 @@ def mainFunction():
         #elif (mainInput in bins):
         #    print(Fore.RED + Style.BRIGHT + "That bin already has been scanned!")
         #    mainFunction()
-        elif (len(mainInput) is not 5):
-            print(Fore.RED + Style.BRIGHT + "This has to be exact 5 characters")
-            mainFunction()
         else:
             if len(bins) == 4:
                 print(Fore.RED + Style.BRIGHT + "You are carrying to many bins, please scan your source and destination location" + Style.RESET_ALL)
@@ -120,6 +117,9 @@ def mainFunction():
             else:
                 fullInput = input(Fore.BLUE + Style.BRIGHT + "Is this a full stack? Press 1 for Yes | 2 for No | 3 for bin: \n" + Style.RESET_ALL)
                 if "1" == fullInput:
+                    if (len(mainInput) < 5):
+                        print(Fore.RED + Style.BRIGHT + "Finished goods UPC's must be 5 or more characters!")
+                        mainFunction()
                     bins.append(mainInput + ":" + "FULL")
                     tempString = ""
                     for x in range(len(bins)):
@@ -127,6 +127,9 @@ def mainFunction():
                     print(Fore.GREEN + Style.BRIGHT + tempString)
                     mainFunction()
                 elif "2" == fullInput:
+                    if (len(mainInput) < 5):
+                        print(Fore.RED + Style.BRIGHT + "Finished goods UPC's must be 5 or more characters!")
+                        mainFunction()
                     partialInput = input(Fore.BLUE + Style.BRIGHT + "Enter the number of units in this stack: \n" + Style.RESET_ALL)
                     bins.append(mainInput + ":" + partialInput)
                     tempString = ""
