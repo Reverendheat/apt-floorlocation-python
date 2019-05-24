@@ -131,12 +131,29 @@ def mainFunction():
                         print(Fore.RED + Style.BRIGHT + "Finished goods UPC's must be 5 or more characters!")
                         mainFunction()
                     partialInput = input(Fore.BLUE + Style.BRIGHT + "Enter the number of units in this stack: \n" + Style.RESET_ALL)
-                    bins.append(mainInput + ":" + partialInput)
-                    tempString = ""
-                    for x in range(len(bins)):
-                        tempString += (bins[x] + ",")
-                    print(Fore.GREEN + Style.BRIGHT + tempString)
-                    mainFunction()
+                    if (startOver in partialInput):
+                        bins[:] = []
+                        sourceLocation = ""
+                        destinationLocation = ""
+                        tempString = ""
+                        print(Fore.YELLOW + Style.BRIGHT + "You just cleared the current session")
+                        mainFunction()
+                    elif (clearInput in partialInput):
+                        partialInput = ""
+                        print(Fore.YELLOW + Style.BRIGHT + "You just cleared the input, scan the bin or item again.")
+                        mainFunction()
+                    #is IT A NUMBEr
+                    elif(partialInput.isnumeric() is False):
+                        partialInput = ""
+                        print(Fore.YELLOW + Style.BRIGHT + "Not a number, please scan the bin again.")
+                        mainFunction()
+                    else:
+                        bins.append(mainInput + ":" + partialInput)
+                        tempString = ""
+                        for x in range(len(bins)):
+                            tempString += (bins[x] + ",")
+                        print(Fore.GREEN + Style.BRIGHT + tempString)
+                        mainFunction()
                 elif "3" == fullInput:
                     bins.append(mainInput)
                     tempString = ""
