@@ -1,6 +1,7 @@
 import csv
 import sqlite3
 import datetime
+import os
 from colorama import init
 from colorama import Fore, Back, Style
 init()
@@ -46,6 +47,8 @@ removeSource = "REMOVESOURCE"
 removeLastLine = "REMOVELAST"
 clearInput = "CLEARINPUT"
 startOver = "STARTOVER"
+weighBIN = "WEIGHBIN"
+wipFL = "WIPFL"
 
 #Main loop
 print(Fore.GREEN + title + Style.RESET_ALL)
@@ -103,6 +106,14 @@ def mainFunction():
         sourceLocation = ""
         destinationLocation = ""
         print(Fore.YELLOW + Style.BRIGHT + "You just cleared the current session")
+        mainFunction()
+    elif (weighBIN in mainInput):
+        os.system('python3 ebk.py')
+        os.system('clear')
+        mainFunction()
+    elif (wipFL in mainInput):
+        os.system('python3 wipfl.py')
+        os.system('clear')
         mainFunction()
     elif not any(word in mainInput for word in locationWords):
         if (not mainInput):
