@@ -108,11 +108,11 @@ def mainFunction():
         print(Fore.YELLOW + Style.BRIGHT + "You just cleared the current session")
         mainFunction()
     elif (weighBIN in mainInput):
-        os.system('python3 ebk.py')
+        os.system('python3 /home/pi/aptfloorlocationpython/ebk.py')
         os.system('clear')
         mainFunction()
     elif (wipFL in mainInput):
-        os.system('python3 wipfl.py')
+        os.system('python3 /home/pi/aptfloorlocationpython/wipfl.py')
         os.system('clear')
         mainFunction()
     elif not any(word in mainInput for word in locationWords):
