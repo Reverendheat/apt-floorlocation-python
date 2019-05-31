@@ -4,7 +4,6 @@ import urwid.web_display
 import socket
 import pyodbc 
 
-
 #assign key remappings here, this overrides the keypress method of urwid.ListBox
 class MyBox(urwid.ListBox):
     def keypress(self, size, key): 
@@ -14,10 +13,22 @@ class MyBox(urwid.ListBox):
             key = 'down'
         if key == 'f8':
             raise urwid.ExitMainLoop()
-        if key == 'backspace':
+        if key == '.':
             raise urwid.ExitMainLoop()
         super().keypress(size, key) 
-   
+
+global Weight
+Weight = '' 
+global ScanCode0
+ScanCode0 = ''
+global ScanCode1
+ScanCode1 = ''
+global ScanCode2
+ScanCode2 = ''
+global WipNum
+WipNum = ''
+global Cleared
+Cleared = ""
 
 def main(): 
     
@@ -39,70 +50,41 @@ def main():
                 return('SktRecErr!')
         except:
             return('SktCnctErr!')
-        
-    global Weight
-    Weight = CollectWeight()
-    
-    def CollectCode():
-        listbox.set_focus(3)
+         
+    def CollectCode(bincodeindex):
+        listbox.set_focus(bincodeindex)
         _, boxText = listbox.get_focus() 
         code = listbox_content[boxText].original_widget.base_widget._edit_text
         return code
     
-    #if radio buttin is checked return condition of checked button
-    def CollectCondition():
-        #Condition = urwid.Text(str( {x.get_label(): x.get_state() for x in AttrWraps_list} ))
-        
-        return Condition
-    #
-    def ResetCode(): #make this iterate through a list of Bin indexes clearing out all if one does not meet bin# conditions (num or blank)
-        listbox.set_focus(2) #here because directly going to the 3rd field clears the value, but does not update the graphic
-        listbox.set_focus(3)
-        _, boxText = listbox.get_focus() 
-        listbox_content[boxText].original_widget.base_widget._edit_text = ""
-
-        
-
-    def ResetWeight(): 
-        listbox.set_focus(4) #4 sets focus on listbox index of the weight text
-        global ClearedWeight
-        ClearedWeight = ""
+    def ResetCode(codeindex): #make this iterate through a list of Bin indexes clearing out all if one does not meet bin# conditions (num or blank)
+        listbox.set_focus(codeindex-1) #here because directly going to the 3rd field clears the value, but does not update the graphic
+        listbox.set_focus(codeindex)
         _, boxText = listbox.get_focus() 
         am = listbox_content[boxText].original_widget 
-        am.set_edit_text(ClearedWeight) 
+        am.set_edit_text(Cleared) 
+
+    def ResetWeight(): 
+        listbox.set_focus(11) 
+        _, boxText = listbox.get_focus() 
+        am = listbox_content[boxText].original_widget 
+        am.set_edit_text(Cleared)  
         
-
-    global ScanCode
-    ScanCode = ''
-    global ScanCode1
-    ScanCode1 = ''
-    global ScanCode2
-    ScanCode2 = ''
-
-    global WipNum
-    WipNum = ''
-
-
-
-    
-    text_header = (u"Molded Part Weight Utility. / for UP  * for DOWN.  Backspace exits.") #adjust this per keypad
+    text_header = (u"Molded Part Weight Utility. / for UP  * for DOWN.  Period Key exits.") #adjust this per keypad
     text_intro = [(
         u" Enter information into all fields"
         u" before submitting.")]  
     textEditBinCode = ('editcp', u"Bin Code: ")
     textEditWipNum = ('editcp', u"Part Num: ")
     textEditBinCode1 = ('editcp', u"Bin Code: ")
-
     textEditBinCode2 = ('editcp', u"Bin Code: ")
-
     textEditWeight = ('editcp', u"Total Bin Weight: ")  
-    
     text_WeightButton = [u"Update Weight"]
     def WeightButton_press(button):
         frame.footer = urwid.AttrWrap(urwid.Text(
             [u"Pressed: ", button.get_label()]), 'button')
         listbox.set_focus(11) #11 sets focus on listbox index of the weight text
-        global Weight
+        global Weight 
         Weight = CollectWeight() 
         _, boxText = listbox.get_focus() 
         am = listbox_content[boxText].original_widget 
@@ -114,64 +96,71 @@ def main():
     def submit_button_press(button):
         frame.footer = urwid.AttrWrap(urwid.Text(
             [u"Pressed: ", button.get_label()]), 'header')
-        ScanCode = CollectCode() 
-        if (len(ScanCode) != 5) or (len(ScanCode1) != 5) or (len(ScanCode2) != 5):
-            ResetCode()
-            
-        else:
-        
+        ScanCode0 = CollectCode(5) 
+        ScanCode1 = CollectCode(7)
+        ScanCode2 = CollectCode(9)
+        WipNum = CollectCode(3)
+        EmpId = 'xxxx'
+        FilledBinWeight = Weight
+        if (len(ScanCode0) != 5):
+            ResetCode(5)
+        elif (len(ScanCode1) != 5):
+            ResetCode(7)
+        elif (len(ScanCode2) != 5):
+            ResetCode(9)   
+        elif (len(WipNum) != 12):
+            ResetCode(3)       
+        elif ((len(Weight)) < 5) or ((len(Weight)) >= 8):
+            ResetCode(11)
+        else:       
             conn = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};' # to get this driver working had to install mssqltools msft package
                                 'Server=NEWMAS;'
                                 'Database=FloorLocations;'
-                                    'uid=SA;pwd=AA734248pass;'
-                                    )
+                                'uid=SA;pwd=AA734248pass;'
+                                )
             conn.autocommit = True
-            cursor = conn.cursor()
-            cursor.execute("EXEC dbo.ABW_EmptyBinWeightsInsert @emptyweight = {}, @scancode = {}, @condition = {}".format(Weight,ScanCode))
-            conn.close()
-            #clear weight,Scancode, condition
+            cursor = conn.cursor() 
+            #below, the @PartNum parameter had to be escaped with [] for hyphens to correctly pass through
+            cursor.execute("EXEC dbo.ABW_WIP_BinInsert @EmpID = {}, @FilledBinWeight = {}, @PartNum = [{}], @ScanCode0 = {}, @ScanCode1 = {}, @ScanCode2 = {} ".format(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2))
+            conn.close()                    
+            #clear weight,Scancode, WIP #
             ResetWeight()
-            ResetCode()
-            Condition=''
+            ResetCode(5)
+            ResetCode(7)
+            ResetCode(9)
+            ResetCode(11)
+            ResetCode(3)
    
-
-    
+    #index numbers for reference    
     blank = urwid.Divider()
     listbox_content = [
-        blank, #0
-        urwid.Padding(urwid.Text(text_intro), left=2, right=2, min_width=20), #1
-        
-        blank, #2
-        
+        blank, #[0]
+        urwid.Padding(urwid.Text(text_intro), left=2, right=2, min_width=20), #[1]
+        blank, #[2] 
         urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditWipNum, WipNum), # [3] wipnum
-            'editbx','editfc' ), left=10, width=22),
+            'editbx','editfc' ), left=10, width=24),
         blank, #[4]
-        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditBinCode, ScanCode), # [5] bincode
+        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditBinCode, ScanCode0), # [5] bincode
             'editbx','editfc' ), left=10, width=22),
         blank, #[6]
         urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditBinCode1, ScanCode1), # [7] bincode1
             'editbx','editfc' ), left=10, width=22),
-
         blank, #[8]
         urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditBinCode2, ScanCode2), #[9] bincode2
             'editbx','editfc' ), left=10, width=22),
-
         blank, #[10]
         urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditWeight, Weight), # [11] weight
             'editbx','editfc' ), left=5, width=30),
         blank, #[12]
-        #
         urwid.Padding(urwid.GridFlow(
             [urwid.AttrWrap(urwid.Button(txt, WeightButton_press),
                 'buttn','buttnf') for txt in text_WeightButton],
             10, 3, 1, 'left'),
             left=17, right=3, min_width=13), #[13]
-        blank, #[14]
-          
+        blank, #[14]        
         urwid.AttrWrap(urwid.Divider("=", 1), 'bright'),
         urwid.Padding(urwid.Text(text_divider), left=2, right=2, min_width=20),
         urwid.AttrWrap(urwid.Divider("-", 0, 1), 'bright'),
-
         urwid.Padding(urwid.GridFlow(
             [urwid.AttrWrap(urwid.Button(txt, submit_button_press),
                 'buttn','buttnf') for txt in submit_text_button_list],
@@ -179,16 +168,11 @@ def main():
             left=15, right=3, min_width=13),
         blank,
         
-        
-
-
-        ]
+         ]
 
 
     header = urwid.AttrWrap(urwid.Text(text_header), 'header')
     listbox = MyBox(urwid.SimpleListWalker(listbox_content))
-
-    
     frame = urwid.Frame(urwid.AttrWrap(listbox, 'body'), header=header)
 
     palette = [

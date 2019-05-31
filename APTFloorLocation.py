@@ -271,4 +271,4 @@ def sendToCSV():
 try:
     mainFunction()
 except KeyboardInterrupt:
-    print(Fore.RED + "Exiting, goodbye!" + Style.RESET_ALL)
+    print(Fore.RED + "Exiting main program, goodbye!" + Style.RESET_ALL)

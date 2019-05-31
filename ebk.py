@@ -15,10 +15,18 @@ class MyBox(urwid.ListBox):
             key = 'down'
         if key == 'f8':
             raise urwid.ExitMainLoop()
-        if key == 'backspace':
+        if key == '.':
             raise urwid.ExitMainLoop()
         super().keypress(size, key) 
    
+global ScanCode
+ScanCode = ''
+
+global Weight
+Weight = ''
+
+global ClearedWeight
+ClearedWeight = ''
 
 def main(): 
     
@@ -41,8 +49,7 @@ def main():
         except:
             return('SktCnctErr!')
         
-    global Weight
-    Weight = CollectWeight()
+    
     
     def CollectCode():
         listbox.set_focus(3)
@@ -50,12 +57,6 @@ def main():
         code = listbox_content[boxText].original_widget.base_widget._edit_text
         return code
     
-    #if radio buttin is checked return condition of checked button
-    def CollectCondition():
-        #Condition = urwid.Text(str( {x.get_label(): x.get_state() for x in AttrWraps_list} ))
-        
-        return Condition
-    #
     def ResetCode():
         listbox.set_focus(2) #here because directly going to the 3rd field clears the value, but does not update the graphic
         listbox.set_focus(3)
@@ -64,18 +65,14 @@ def main():
         
 
     def ResetWeight():
-        listbox.set_focus(4) #4 sets focus on listbox index of the weight text
+        listbox.set_focus(4) 
         global ClearedWeight
         ClearedWeight = ""
         _, boxText = listbox.get_focus() 
         am = listbox_content[boxText].original_widget 
         am.set_edit_text(ClearedWeight) 
-        
-
-    global ScanCode
-    ScanCode = ''
     
-    text_header = (u"Empty Bin Weight Utility. / for UP  * for DOWN.  Backspace exits.") #adjust this per keypad
+    text_header = (u"Empty Bin Weight Utility. / for UP  * for DOWN.  Period Key exits.") #adjust this per keypad
     text_intro = [(
         u" Enter information into all fields"
         u" before submitting.")]  
@@ -87,21 +84,24 @@ def main():
         frame.footer = urwid.AttrWrap(urwid.Text(
             [u"Pressed: ", button.get_label()]), 'button')
         listbox.set_focus(4) #4 sets focus on listbox index of the weight text
-        global Weight
+        global Weight 
         Weight = CollectWeight() 
         _, boxText = listbox.get_focus() 
         am = listbox_content[boxText].original_widget 
         am.set_edit_text(Weight) 
     
-    text_divider =  [u"Select bin condition. Bin ",u"must"," be on scale when choosing condition."]
+    text_divider =  [u"Select bin condition to submit entry."]
 
     acceptable_text_button_list = [u"Acceptable"]
     def acceptable_button_press(button):
         frame.footer = urwid.AttrWrap(urwid.Text(
             [u"Pressed: ", button.get_label()]), 'header')
         ScanCode = CollectCode() 
-        if (len(ScanCode) < 5):
+        emptyWeight = Weight
+        if (len(ScanCode) != 5):
             ResetCode()
+        elif ((len(Weight)) < 5) or ((len(Weight)) >= 8):
+            ResetWeight()
         else:
         
             Condition = 'acceptable'
@@ -112,7 +112,7 @@ def main():
                                     )
             conn.autocommit = True
             cursor = conn.cursor()
-            cursor.execute("EXEC dbo.ABW_EmptyBinWeightsInsert @emptyweight = {}, @scancode = {}, @condition = {}".format(Weight,ScanCode,Condition))
+            cursor.execute("EXEC dbo.ABW_EmptyBinWeightsInsert @emptyweight = {}, @scancode = {}, @condition = {}".format(emptyWeight,ScanCode,Condition))
             conn.close()
             #clear weight,Scancode, condition
             ResetWeight()
@@ -122,9 +122,12 @@ def main():
     def damaged_button_press(button):
         frame.footer = urwid.AttrWrap(urwid.Text(
             [u"Pressed: ", button.get_label()]), 'header')
-        ScanCode = CollectCode() 
-        if (len(ScanCode) < 5):
+        ScanCode = CollectCode()
+        emptyWeight = Weight 
+        if (len(ScanCode) != 5):
             ResetCode()
+        elif ((len(Weight)) < 5) or ((len(Weight)) >= 8):
+            ResetWeight()
         else:
             Condition = 'damaged'
             conn = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};' # to get this driver working had to install mssqltools msft package
@@ -134,7 +137,7 @@ def main():
                                     )
             conn.autocommit = True
             cursor = conn.cursor()
-            cursor.execute("EXEC dbo.ABW_EmptyBinWeightsInsert @emptyweight = {}, @scancode = {}, @condition = {}".format(Weight,ScanCode,Condition))
+            cursor.execute("EXEC dbo.ABW_EmptyBinWeightsInsert @emptyweight = {}, @scancode = {}, @condition = {}".format(emptyWeight,ScanCode,Condition))
             conn.close()
             #clear weight,Scancode, condition
             ResetWeight()
@@ -152,13 +155,11 @@ def main():
         urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditWeight, Weight), #weight
             'editbx','editfc' ), left=10, width=20),
         blank,
-        #
         urwid.Padding(urwid.GridFlow(
             [urwid.AttrWrap(urwid.Button(txt, WeightButton_press),
                 'buttn','buttnf') for txt in text_WeightButton],
             10, 3, 1, 'left'),
             left=20, right=3, min_width=13),
-        #    
         urwid.AttrWrap(urwid.Divider("=", 1), 'bright'),
         urwid.Padding(urwid.Text(text_divider), left=2, right=2, min_width=20),
         urwid.AttrWrap(urwid.Divider("-", 0, 1), 'bright'),
@@ -177,9 +178,7 @@ def main():
 
 
     header = urwid.AttrWrap(urwid.Text(text_header), 'header')
-    listbox = MyBox(urwid.SimpleListWalker(listbox_content))
-
-    
+    listbox = MyBox(urwid.SimpleListWalker(listbox_content)) 
     frame = urwid.Frame(urwid.AttrWrap(listbox, 'body'), header=header)
 
     palette = [
