@@ -3,7 +3,7 @@ import urwid.raw_display
 import urwid.web_display
 import socket
 import pyodbc 
-
+#test note
 #assign key remappings here, this overrides the keypress method of urwid.ListBox
 class MyBox(urwid.ListBox):
     def keypress(self, size, key): 
@@ -72,8 +72,8 @@ def main():
         
     text_header = (u"Molded Part Weight Utility. / for UP  * for DOWN.  Period Key exits.") #adjust this per keypad
     text_intro = [(
-        u" Enter information into all fields"
-        u" before submitting.")]  
+        u"Scan part number followed by bin codes."
+        u"Parts MUST all be the same.")]  
     textEditBinCode = ('editcp', u"Bin Code: ")
     textEditWipNum = ('editcp', u"Part Num: ")
     textEditBinCode1 = ('editcp', u"Bin Code: ")
@@ -102,16 +102,20 @@ def main():
         WipNum = CollectCode(3)
         EmpId = 'xxxx'
         FilledBinWeight = Weight
-        if (len(ScanCode0) != 5):
+        if (ScanCode1 == ''):
+            ScanCode1 = 'NA'
+        if (ScanCode2 == ''):
+            ScanCode2 = 'NA'
+        if (len(ScanCode0) != 5): #must be at least one bin
             ResetCode(5)
-        elif (len(ScanCode1) != 5):
-            ResetCode(7)
-        elif (len(ScanCode2) != 5):
+        elif (len(ScanCode1) != 5) and ((ScanCode1) != 'NA'): 
+            ResetCode(7)  
+        elif (len(ScanCode2) != 5) and ((ScanCode2) != 'NA'):
             ResetCode(9)   
         elif (len(WipNum) != 12):
-            ResetCode(3)       
+            ResetCode(3)            
         elif ((len(Weight)) < 5) or ((len(Weight)) >= 8):
-            ResetCode(11)
+           ResetCode(11)
         else:       
             conn = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};' # to get this driver working had to install mssqltools msft package
                                 'Server=NEWMAS;'
@@ -121,7 +125,7 @@ def main():
             conn.autocommit = True
             cursor = conn.cursor() 
             #below, the @PartNum parameter had to be escaped with [] for hyphens to correctly pass through
-            cursor.execute("EXEC dbo.ABW_WIP_BinInsert @EmpID = {}, @FilledBinWeight = {}, @PartNum = [{}], @ScanCode0 = {}, @ScanCode1 = {}, @ScanCode2 = {} ".format(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2))
+            cursor.execute("EXEC dbo.ABW_WIP_BinInsert @EmpID = {}, @FilledBinWeight = {}, @PartNum = [{}], @ScanCode0 = [{}], @ScanCode1 = [{}], @ScanCode2 = [{}] ".format(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2))
             conn.close()                    
             #clear weight,Scancode, WIP #
             ResetWeight()
