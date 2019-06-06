@@ -117,7 +117,7 @@ def main():
         elif ((len(Weight)) < 5) or ((len(Weight)) >= 8):
            ResetCode(11)
         else:       
-            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw pass;TDS_Version=7.4')  
+            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=AA734248pass;TDS_Version=7.4')  
             conn.autocommit = False
             cursor = conn.cursor() 
             #below, the @PartNum parameter had to be escaped with [] for hyphens to correctly pass through

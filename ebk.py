@@ -75,7 +75,7 @@ def main():
     text_header = (u"Empty Bin Weight Utility. / for UP  * for DOWN.  Period Key exits.") #adjust this per keypad
     text_intro = [(
         u" Enter information into all fields"
-        u" before submitting.")]  
+        u" before  mitting.")]  
     textEditBinCode = ('editcp', u"Bin Code: ")
     textEditWeight = ('editcp', u"Bin Weight: ")  
     
@@ -105,7 +105,7 @@ def main():
         else:
         
             Condition = 'acceptable'
-            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw pass;TDS_Version=7.4') 
+            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=AA734248pass;TDS_Version=7.4') 
             conn.autocommit = False
             cursor = conn.cursor()
             cursor.execute("EXEC dbo.ABW_EmptyBinWeightsInsert @emptyweight = {}, @scancode = {}, @condition = {}".format(emptyWeight,ScanCode,Condition))
@@ -127,7 +127,7 @@ def main():
             ResetWeight()
         else:
             Condition = 'damaged'
-            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw pass;TDS_Version=7.4') 
+            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=AA734248pass;TDS_Version=7.4') 
             conn.autocommit = False
             cursor = conn.cursor()
             cursor.execute("EXEC dbo.ABW_EmptyBinWeightsInsert @emptyweight = {}, @scancode = {}, @condition = {}".format(emptyWeight,ScanCode,Condition))
