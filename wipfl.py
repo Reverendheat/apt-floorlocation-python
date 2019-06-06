@@ -3,7 +3,7 @@ import urwid.raw_display
 import urwid.web_display
 import socket
 import pyodbc 
-#test note
+
 #assign key remappings here, this overrides the keypress method of urwid.ListBox
 class MyBox(urwid.ListBox):
     def keypress(self, size, key): 
@@ -57,8 +57,8 @@ def main():
         code = listbox_content[boxText].original_widget.base_widget._edit_text
         return code
     
-    def ResetCode(codeindex): #make this iterate through a list of Bin indexes clearing out all if one does not meet bin# conditions (num or blank)
-        listbox.set_focus(codeindex-1) #here because directly going to the 3rd field clears the value, but does not update the graphic
+    def ResetCode(codeindex): 
+        listbox.set_focus(codeindex-1) #need to hop around here - directly focusing to the 3rd field clears the value, but does not update the graphic
         listbox.set_focus(codeindex)
         _, boxText = listbox.get_focus() 
         am = listbox_content[boxText].original_widget 
@@ -117,15 +117,12 @@ def main():
         elif ((len(Weight)) < 5) or ((len(Weight)) >= 8):
            ResetCode(11)
         else:       
-            conn = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};' # to get this driver working had to install mssqltools msft package
-                                'Server=NEWMAS;'
-                                'Database=FloorLocations;'
-                                'uid=SA;pwd=AA734248pass;'
-                                )
-            conn.autocommit = True
+            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw pass;TDS_Version=7.4')  
+            conn.autocommit = False
             cursor = conn.cursor() 
             #below, the @PartNum parameter had to be escaped with [] for hyphens to correctly pass through
             cursor.execute("EXEC dbo.ABW_WIP_BinInsert @EmpID = {}, @FilledBinWeight = {}, @PartNum = [{}], @ScanCode0 = [{}], @ScanCode1 = [{}], @ScanCode2 = [{}] ".format(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2))
+            conn.commit()
             conn.close()                    
             #clear weight,Scancode, WIP #
             ResetWeight()

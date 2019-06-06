@@ -58,7 +58,7 @@ def main():
         return code
     
     def ResetCode():
-        listbox.set_focus(2) #here because directly going to the 3rd field clears the value, but does not update the graphic
+        listbox.set_focus(2) #need to hop around here - directly focusing to the 3rd field clears the value, but does not update the graphic
         listbox.set_focus(3)
         _, boxText = listbox.get_focus() 
         listbox_content[boxText].original_widget.base_widget._edit_text = ""
@@ -105,14 +105,11 @@ def main():
         else:
         
             Condition = 'acceptable'
-            conn = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};' # to get this driver working had to install mssqltools msft package
-                                'Server=NEWMAS;'
-                                'Database=FloorLocations;'
-                                    'uid=SA;pwd=AA734248pass;'
-                                    )
-            conn.autocommit = True
+            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw pass;TDS_Version=7.4') 
+            conn.autocommit = False
             cursor = conn.cursor()
             cursor.execute("EXEC dbo.ABW_EmptyBinWeightsInsert @emptyweight = {}, @scancode = {}, @condition = {}".format(emptyWeight,ScanCode,Condition))
+            conn.commit()
             conn.close()
             #clear weight,Scancode, condition
             ResetWeight()
@@ -130,14 +127,11 @@ def main():
             ResetWeight()
         else:
             Condition = 'damaged'
-            conn = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};' # to get this driver working had to install mssqltools msft package
-                                'Server=NEWMAS;'
-                                'Database=FloorLocations;'
-                                    'uid=SA;pwd=AA734248pass;'
-                                    )
-            conn.autocommit = True
+            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw pass;TDS_Version=7.4') 
+            conn.autocommit = False
             cursor = conn.cursor()
             cursor.execute("EXEC dbo.ABW_EmptyBinWeightsInsert @emptyweight = {}, @scancode = {}, @condition = {}".format(emptyWeight,ScanCode,Condition))
+            conn.commit()
             conn.close()
             #clear weight,Scancode, condition
             ResetWeight()
