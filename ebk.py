@@ -3,7 +3,9 @@ import urwid.raw_display
 import urwid.web_display
 import socket
 import pyodbc 
-
+from dotenv import load_dotenv
+load_dotenv()
+import os
 
 #assign key remappings here, this overrides the keypress method of urwid.ListBox
 class MyBox(urwid.ListBox):
@@ -29,7 +31,7 @@ global ClearedWeight
 ClearedWeight = ''
 
 def main(): 
-    
+    print(os.getenv("NEWMAS_DB_PASS"))
     #makes scale connection, grabs the weight, and closes the connection.
     def CollectWeight():
         s = socket.socket()
@@ -103,9 +105,8 @@ def main():
         elif ((len(Weight)) < 5) or ((len(Weight)) >= 8):
             ResetWeight()
         else:
-        
             Condition = 'acceptable'
-            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=AA734248pass;TDS_Version=7.4') 
+            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS")) 
             conn.autocommit = False
             cursor = conn.cursor()
             cursor.execute("EXEC dbo.ABW_EmptyBinWeightsInsert @emptyweight = {}, @scancode = {}, @condition = {}".format(emptyWeight,ScanCode,Condition))
@@ -127,7 +128,7 @@ def main():
             ResetWeight()
         else:
             Condition = 'damaged'
-            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=AA734248pass;TDS_Version=7.4') 
+            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))
             conn.autocommit = False
             cursor = conn.cursor()
             cursor.execute("EXEC dbo.ABW_EmptyBinWeightsInsert @emptyweight = {}, @scancode = {}, @condition = {}".format(emptyWeight,ScanCode,Condition))

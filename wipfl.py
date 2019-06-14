@@ -2,7 +2,10 @@ import urwid
 import urwid.raw_display
 import urwid.web_display
 import socket
-import pyodbc 
+import pyodbc
+from dotenv import load_dotenv
+load_dotenv()
+import os
 
 #assign key remappings here, this overrides the keypress method of urwid.ListBox
 class MyBox(urwid.ListBox):
@@ -117,7 +120,7 @@ def main():
         elif ((len(Weight)) < 5) or ((len(Weight)) >= 8):
            ResetCode(11)
         else:       
-            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=AA734248pass;TDS_Version=7.4')  
+            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))  
             conn.autocommit = False
             cursor = conn.cursor() 
             #below, the @PartNum parameter had to be escaped with [] for hyphens to correctly pass through
