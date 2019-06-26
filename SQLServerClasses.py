@@ -1,4 +1,6 @@
+import pyodbc
 class SQLServerFunctions:
+
 
 #pyodbc can only return tuple values from SQL Server, use this to clean them up.
     def RemoveTupleGarbage(self, input):
