@@ -11,7 +11,7 @@ class SQLServerFunctions:
 
 #checks part number against IM1_Inventory masterfile, returns bool value.
     def PartExistsTest(self, partNumber):
-        conn = pyodbc.connect('DSN=NAME1;uid=SA;pwd=AA734248pass;TDS_Version=7.4')
+        conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS")) 
         cursor = conn.cursor()
         sql = "DECLARE @response nvarchar(50);EXEC dbo.ABW_DoesItemNumExist @partNum = [{}], @paramOut = @response OUT; SELECT @response AS PartConfirmed;".format(partNumber)
         cursor.execute(sql)
