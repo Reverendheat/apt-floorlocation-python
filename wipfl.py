@@ -119,8 +119,8 @@ def main():
             ResetCode(9)   
         elif (len(WipNum) != 12):
             ResetCode(3)
-        elif sqlTest.PartExistsTest(WipNum) != True:
-            ResetCode(3)    
+     #   elif sqlTest.PartExistsTest(WipNum) != True:
+      #      ResetCode(3)    
      #   elif ((len(Weight)) < 5) or ((len(Weight)) >= 8):
       #     ResetCode(11)
         else:       
