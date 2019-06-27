@@ -6,6 +6,6 @@ garbage = '(asdff'
 withoutGarbage = ermf.RemoveTupleGarbage(garbage)
 
 print(withoutGarbage)
-partNumber = '01360'
+partNumber = '30060'
 isValid = ermf.PartExistsTest(partNumber)
 print(isValid)

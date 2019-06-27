@@ -6,6 +6,7 @@ import pyodbc
 from dotenv import load_dotenv
 load_dotenv()
 import os
+from SQLServerClasses import SQLServerFunctions
 
 #assign key remappings here, this overrides the keypress method of urwid.ListBox
 class MyBox(urwid.ListBox):
@@ -105,6 +106,7 @@ def main():
         WipNum = CollectCode(3)
         EmpId = 'xxxx'
         FilledBinWeight = Weight
+        sqlTest = SQLServerFunctions()
         if (ScanCode1 == ''):
             ScanCode1 = 'NA'
         if (ScanCode2 == ''):
@@ -116,9 +118,11 @@ def main():
         elif (len(ScanCode2) != 5) and ((ScanCode2) != 'NA'):
             ResetCode(9)   
         elif (len(WipNum) != 12):
-            ResetCode(3)            
-        elif ((len(Weight)) < 5) or ((len(Weight)) >= 8):
-           ResetCode(11)
+            ResetCode(3)
+        elif sqlTest.PartExistsTest(WipNum) != True:
+            ResetCode(3)    
+     #   elif ((len(Weight)) < 5) or ((len(Weight)) >= 8):
+      #     ResetCode(11)
         else:       
             conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))  
             conn.autocommit = False
