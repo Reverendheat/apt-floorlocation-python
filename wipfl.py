@@ -3,9 +3,9 @@ import urwid.raw_display
 import urwid.web_display
 import socket
 import pyodbc
-from dotenv import load_dotenv
-load_dotenv()
-import os
+#from dotenv import load_dotenv
+#load_dotenv()
+#import os
 from SQLServerClasses import SQLServerFunctions
 
 #assign key remappings here, this overrides the keypress method of urwid.ListBox
@@ -31,18 +31,21 @@ global ScanCode2
 ScanCode2 = ''
 global WipNum
 WipNum = ''
+global ScaleCode
+ScaleCode = ''
 global Cleared
 Cleared = ""
 
 def main(): 
     
     #makes scale connection, grabs the weight, and closes the connection.
-    def CollectWeight():
+    def CollectWeight(ScaleCode):
         s = socket.socket()
         s.settimeout(2)
         port = 23
         try:
-            s.connect(('10.79.3.33', 23))
+            s.connect((ScaleCode,23))
+            #s.connect(('10.79.3.33', 23))
             s.settimeout(None)
             try:
                 scaleData1  = s.recv(19) #19 bytes to trim off lbs, tare, and net weight information
@@ -68,12 +71,14 @@ def main():
         am = listbox_content[boxText].original_widget 
         am.set_edit_text(Cleared) 
 
-    def ResetWeight(): 
-        listbox.set_focus(11) 
-        _, boxText = listbox.get_focus() 
+    def ResetWeight(text): 
+        listbox.set_focus(13) 
+        _, boxText = listbox.get_focus()
         am = listbox_content[boxText].original_widget 
-        am.set_edit_text(Cleared)  
+        am.set_edit_text(text)
         
+
+
     text_header = (u"Molded Part Weight Utility. / for UP  * for DOWN.  Period Key exits.") #adjust this per keypad
     text_intro = [(
         u"Scan part number followed by bin codes."
@@ -82,17 +87,21 @@ def main():
     textEditWipNum = ('editcp', u"Part Num: ")
     textEditBinCode1 = ('editcp', u"Bin Code: ")
     textEditBinCode2 = ('editcp', u"Bin Code: ")
+    textEditScaleCode = ('editcp', u"Scale Code : ")
     textEditWeight = ('editcp', u"Total Bin Weight: ")  
     text_WeightButton = [u"Update Weight"]
+    #Weight = "Scan Scale Code"
     def WeightButton_press(button):
+        ScaleCode = CollectCode(11)
         frame.footer = urwid.AttrWrap(urwid.Text(
             [u"Pressed: ", button.get_label()]), 'button')
-        listbox.set_focus(11) #11 sets focus on listbox index of the weight text
-        global Weight 
-        Weight = CollectWeight() 
+        listbox.set_focus(13) #13 sets focus on listbox index of the weight text
+        global Weight
+        Weight = CollectWeight(ScaleCode) 
         _, boxText = listbox.get_focus() 
         am = listbox_content[boxText].original_widget 
-        am.set_edit_text(Weight) 
+        am.set_edit_text(Weight)
+    
     
     text_divider =  [u"Press SUBMIT to insert data and reset."]
 
@@ -106,25 +115,27 @@ def main():
         WipNum = CollectCode(3)
         EmpId = 'xxxx'
         FilledBinWeight = Weight
-        sqlTest = SQLServerFunctions()
         if (ScanCode1 == ''):
             ScanCode1 = 'NA'
         if (ScanCode2 == ''):
             ScanCode2 = 'NA'
-        if (len(ScanCode0) != 5): #must be at least one bin
+        if ScanCode0 == ScanCode1:
+            ResetCode(7)
+        elif ScanCode1 == ScanCode2 and ScanCode1 != 'NA':
+            ResetCode(9)
+        elif (len(ScanCode0) != 5): #must be at least one bin
             ResetCode(5)
         elif (len(ScanCode1) != 5) and ((ScanCode1) != 'NA'): 
             ResetCode(7)  
         elif (len(ScanCode2) != 5) and ((ScanCode2) != 'NA'):
             ResetCode(9)   
         elif (len(WipNum) != 12):
-            ResetCode(3)
-     #   elif sqlTest.PartExistsTest(WipNum) != True:
-      #      ResetCode(3)    
-     #   elif ((len(Weight)) < 5) or ((len(Weight)) >= 8):
-      #     ResetCode(11)
-        else:       
-            conn = pyodbc.connect('DSN=NAME1;UID=SA;PWD=%s;TDS_Version=7.4' %(os.environ.get("NEWMAS_DB_PASS")))  
+            ResetCode(3)            
+        elif ((len(Weight)) < 5) or ((len(Weight)) >= 8):
+           ResetCode(13)
+        else:
+            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw pass;TDS_Version=7.4')       
+            #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))  
             conn.autocommit = False
             cursor = conn.cursor() 
             #below, the @PartNum parameter had to be escaped with [] for hyphens to correctly pass through
@@ -132,11 +143,11 @@ def main():
             conn.commit()
             conn.close()                    
             #clear weight,Scancode, WIP #
-            ResetWeight()
+            ResetCode(13)
+            ResetCode(11)
             ResetCode(5)
             ResetCode(7)
             ResetCode(9)
-            ResetCode(11)
             ResetCode(3)
    
     #index numbers for reference    
@@ -157,8 +168,11 @@ def main():
         urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditBinCode2, ScanCode2), #[9] bincode2
             'editbx','editfc' ), left=10, width=22),
         blank, #[10]
-        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditWeight, Weight), # [11] weight
-            'editbx','editfc' ), left=5, width=30),
+        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditScaleCode, ScaleCode), #[11] ScaleCode
+            'editbx','editfc' ), left=10, width=31),
+        blank, #12
+        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditWeight, Weight), # [13] weight
+            'editbx','editfc' ), left=5, width=36),
         blank, #[12]
         urwid.Padding(urwid.GridFlow(
             [urwid.AttrWrap(urwid.Button(txt, WeightButton_press),
@@ -213,6 +227,7 @@ def setup():
         return
 
     main()
+
 
 if '__main__'==__name__ or urwid.web_display.is_web_request():
     setup()
