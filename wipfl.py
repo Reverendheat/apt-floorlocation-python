@@ -56,6 +56,7 @@ def main():
             except:
                 return('SktRecErr!')
         except:
+
             return('888')
             # !!!!!!!!!!!!!!!!!!!
             #return('SktCnctErr!')
@@ -115,8 +116,8 @@ def main():
         ScanCode1 = CollectCode(7)
         ScanCode2 = CollectCode(9)
         WipNum = CollectCode(3)
-        WipTest = SQLServerFunctions()
-        isValid = WipTest.PartExistsTest(WipNum) 
+        SqlFunctions = SQLServerFunctions()
+        isValid = SqlFunctions.PartExistsTest(WipNum) 
         EmpId = 'xxxx'
         FilledBinWeight = Weight
         if (ScanCode1 == ''):
@@ -137,18 +138,19 @@ def main():
             ResetCode(3)
         elif isValid == False:
             ResetCode(3)
-        elif ((len(Weight)) < 5) or ((len(Weight)) >= 8):
+        elif ((len(FilledBinWeight)) < 5) or ((len(FilledBinWeight)) >= 8):
            ResetCode(13)
         else:
-            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
+            SqlFunctions.SubmitWipBin(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2)
+            # conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
             #until dotenv is fixed leave below line out
             #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))  
-            conn.autocommit = False
-            cursor = conn.cursor() 
+            # conn.autocommit = False
+            # cursor = conn.cursor() 
             #@PartNum parameter had to be escaped with [] for hyphens to correctly pass through
-            cursor.execute("EXEC dbo.ABW_WIP_BinInsert @EmpID = {}, @FilledBinWeight = {}, @PartNum = [{}], @ScanCode0 = [{}], @ScanCode1 = [{}], @ScanCode2 = [{}] ".format(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2))
-            conn.commit()
-            conn.close()                    
+            # cursor.execute("EXEC dbo.ABW_WIP_BinInsert @EmpID = {}, @FilledBinWeight = {}, @PartNum = [{}], @ScanCode0 = [{}], @ScanCode1 = [{}], @ScanCode2 = [{}] ".format(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2))
+            # conn.commit()
+            # conn.close()                    
             #clear weight,Scancode, WIP #
             ResetCode(13)
             ResetCode(11)

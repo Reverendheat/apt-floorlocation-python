@@ -30,6 +30,19 @@ class SQLServerFunctions:
         else:
             return 'Error with PartExistsTest function'
 
+    def SubmitWipBin(self, EmpId, FilledBinWeight,WipNum,ScanCode0, ScanCode1, ScanCode2):
+        conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
+        
+        #until dotenv is fixed leave below line out
+        #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))  
+        
+        conn.autocommit = False
+        cursor = conn.cursor() 
+        #@PartNum parameter had to be escaped with [] for hyphens to correctly pass through
+        cursor.execute("EXEC dbo.ABW_WIP_BinInsert @EmpID = {}, @FilledBinWeight = {}, @PartNum = [{}], @ScanCode0 = [{}], @ScanCode1 = [{}], @ScanCode2 = [{}] ".format(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2))
+        conn.commit()
+        conn.close()   
+
 if __name__ == '__main__':
     lilbilly = SQLServerFunctions()
     print(lilbilly.PartExistsTest(100))
