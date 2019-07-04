@@ -17,7 +17,7 @@ class MyBox(urwid.ListBox):
             key = 'down'
         if key == 'f8':
             raise urwid.ExitMainLoop()
-        if key == '.':
+        if key == '+':
             raise urwid.ExitMainLoop()
         super().keypress(size, key) 
 
@@ -56,7 +56,9 @@ def main():
             except:
                 return('SktRecErr!')
         except:
-            return('SktCnctErr!')
+            return('888')
+            # !!!!!!!!!!!!!!!!!!!
+            #return('SktCnctErr!')
          
     def CollectCode(bincodeindex):
         listbox.set_focus(bincodeindex)
