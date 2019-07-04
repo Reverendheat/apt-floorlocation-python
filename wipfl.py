@@ -113,6 +113,8 @@ def main():
         ScanCode1 = CollectCode(7)
         ScanCode2 = CollectCode(9)
         WipNum = CollectCode(3)
+        WipTest = SQLServerFunctions()
+        isValid = WipTest.PartExistsTest(WipNum) 
         EmpId = 'xxxx'
         FilledBinWeight = Weight
         if (ScanCode1 == ''):
@@ -130,15 +132,18 @@ def main():
         elif (len(ScanCode2) != 5) and ((ScanCode2) != 'NA'):
             ResetCode(9)   
         elif (len(WipNum) != 12):
-            ResetCode(3)            
+            ResetCode(3)
+        elif isValid == False:
+            ResetCode(3)
         elif ((len(Weight)) < 5) or ((len(Weight)) >= 8):
            ResetCode(13)
         else:
-            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw pass;TDS_Version=7.4')       
+            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
+            #until dotenv is fixed leave below line out
             #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))  
             conn.autocommit = False
             cursor = conn.cursor() 
-            #below, the @PartNum parameter had to be escaped with [] for hyphens to correctly pass through
+            #@PartNum parameter had to be escaped with [] for hyphens to correctly pass through
             cursor.execute("EXEC dbo.ABW_WIP_BinInsert @EmpID = {}, @FilledBinWeight = {}, @PartNum = [{}], @ScanCode0 = [{}], @ScanCode1 = [{}], @ScanCode2 = [{}] ".format(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2))
             conn.commit()
             conn.close()                    
