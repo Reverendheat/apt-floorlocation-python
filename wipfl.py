@@ -56,9 +56,8 @@ def main():
             except:
                 return('SktRecErr!')
         except:
-
-            return('888')
-            # !!!!!!!!!!!!!!!!!!!
+            #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            return('800.01')
             #return('SktCnctErr!')
          
     def CollectCode(bincodeindex):
@@ -102,7 +101,9 @@ def main():
             [u"Pressed: ", button.get_label()]), 'button')
         listbox.set_focus(13) #13 sets focus on listbox index of the weight text
         global Weight
-        Weight = CollectWeight(ScaleCode) 
+        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        Weight = '800.01'
+        #Weight = CollectWeight(ScaleCode) 
         _, boxText = listbox.get_focus() 
         am = listbox_content[boxText].original_widget 
         am.set_edit_text(Weight)
@@ -118,11 +119,11 @@ def main():
         ScanCode1 = CollectCode(7)
         ScanCode2 = CollectCode(9)
         WipNum = CollectCode(3)
+        ScaleIp = CollectCode(11)
         SqlFunctions = SQLServerFunctions()
         isValid = SqlFunctions.PartExistsTest(WipNum) 
         EmpId = 'xxxx'
-        FilledBinWeight = '800.01'
-        #FilledBinWeight = Weight
+        FilledBinWeight = Weight
         if (ScanCode1 == ''):
             ScanCode1 = 'NA'
         if (ScanCode2 == ''):
@@ -141,10 +142,10 @@ def main():
             ResetCode(3)
         elif isValid == False:
             ResetCode(3)
-        elif ((len(Weight)) < 5) or ((len(Weight)) >= 8): #why isn't this FilledBinWeight?
+        elif ((len(FilledBinWeight)) < 5) or ((len(FilledBinWeight)) >= 8):
            ResetCode(13)
         else:
-            SqlFunctions.SubmitWipBin(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2)               
+            SqlFunctions.SubmitWipBin(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2,ScaleIp)               
             #clear weight,Scancode, WIP #
             ResetCode(13)
             ResetCode(11)
@@ -152,6 +153,7 @@ def main():
             ResetCode(7)
             ResetCode(9)
             ResetCode(3)
+            FilledBinWeight = ''
             
    
     #index numbers for reference    

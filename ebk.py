@@ -53,13 +53,10 @@ def main():
             except:
                 return('SktRecErr!')
         except:
-
+            #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             return('800.01')
-            # !!!!!!!!!!!!!!!!!!!
             #return('SktCnctErr!')
         
-    
-    
     def CollectCode(binCodeIndex):
         listbox.set_focus(binCodeIndex)
         _, boxText = listbox.get_focus() 
@@ -99,7 +96,9 @@ def main():
             [u"Pressed: ", button.get_label()]), 'button')
         listbox.set_focus(10) 
         global Weight 
-        Weight = CollectWeight(ScaleCode) 
+        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        Weight = '800.01'
+        #Weight = CollectWeight(ScaleCode) 
         _, boxText = listbox.get_focus() 
         am = listbox_content[boxText].original_widget 
         am.set_edit_text(Weight) 
@@ -113,57 +112,44 @@ def main():
         ScanCode = CollectCode(3) 
         binType = CollectCode(5)
         scaleIp = CollectCode(8)
-        emptyWeight = '800.01'
-        # emptyWeight = Weight
+        emptyWeight = Weight
         SqlFunctions = SQLServerFunctions()
         Condition = 'acceptable'
         if binType not in ['1','2','3','4']:
             ResetCode(5)
         elif (len(ScanCode) != 5):
             ResetCode(3)
-        elif ((len(emptyWeight)) < 5) or ((len(emptyWeight)) >= 8): #why is this Weight and not emptyWeight?
+        elif ((len(emptyWeight)) < 5) or ((len(emptyWeight)) >= 8): 
             ResetWeight()
         else:
             SqlFunctions.SubmitCondition(emptyWeight,ScanCode,Condition,binType,scaleIp)
-            # Condition = 'acceptable'
-            # conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS")) 
-            # conn.autocommit = False
-            # cursor = conn.cursor()
-            # cursor.execute("EXEC dbo.ABW_EmptyBinWeightsInsert @emptyweight = {}, @scancode = {}, @condition = {}".format(emptyWeight,ScanCode,Condition))
-            # conn.commit()
-            # conn.close()
-            #clear weight,Scancode, condition
             ResetWeight()
             ResetCode(3)
+            ResetCode(6)
             Condition=''
     damaged_text_button_list = [u"Damaged"]
     def damaged_button_press(button):
         frame.footer = urwid.AttrWrap(urwid.Text(
             [u"Pressed: ", button.get_label()]), 'header')
-        ScanCode = CollectCode(3)
-        emptyWeight = '800.01'
-        # emptyWeight = Weight 
+        ScanCode = CollectCode(3) 
+        binType = CollectCode(5)
+        scaleIp = CollectCode(8)
+        emptyWeight = Weight 
         SqlFunctions = SQLServerFunctions()
         Condition = 'damaged'
-        if (len(ScanCode) != 5):
+        if binType not in ['1','2','3','4']:
+            ResetCode(5)
+        elif (len(ScanCode) != 5):
             ResetCode(3)
         elif ((len(Weight)) < 5) or ((len(Weight)) >= 8):
             ResetWeight()
         else:
-            SqlFunctions.SubmitDamaged(emptyWeight,ScanCode,Condition)
-            #Condition = 'damaged'
-            # conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))
-            # conn.autocommit = False
-            # cursor = conn.cursor()
-            # cursor.execute("EXEC dbo.ABW_EmptyBinWeightsInsert @emptyweight = {}, @scancode = {}, @condition = {}".format(emptyWeight,ScanCode,Condition))
-            # conn.commit()
-            # conn.close()
-            #clear weight,Scancode, condition
+            SqlFunctions.SubmitDamaged(emptyWeight,ScanCode,Condition,binType,scaleIp)
             ResetWeight()
             ResetCode(3)
+            ResetCode(6)
             Condition=''
 
-    
     blank = urwid.Divider()
     listbox_content = [
         blank, #0
@@ -207,7 +193,6 @@ def main():
 
         ]
 
-
     header = urwid.AttrWrap(urwid.Text(text_header), 'header')
     listbox = MyBox(urwid.SimpleListWalker(listbox_content)) 
     frame = urwid.Frame(urwid.AttrWrap(listbox, 'body'), header=header)
@@ -224,8 +209,7 @@ def main():
         ('buttn','black','dark cyan'),
         ('buttnf','white','dark blue','bold'),
         ]
-
-    
+ 
     # use appropriate Screen class
     if urwid.web_display.is_web_request():
         screen = urwid.web_display.Screen()
@@ -233,7 +217,6 @@ def main():
         screen = urwid.raw_display.Screen()
 
     urwid.MainLoop(frame, palette, screen).run()
-
 
 def setup():
     urwid.web_display.set_preferences("Urwid Tour")

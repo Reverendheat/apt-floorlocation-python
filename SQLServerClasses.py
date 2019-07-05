@@ -29,6 +29,7 @@ class SQLServerFunctions:
             return False
         else:
             return 'Error with PartExistsTest function'
+        conn.close()
 
     def SubmitWipBin(self, EmpId, FilledBinWeight,WipNum,ScanCode0, ScanCode1, ScanCode2,ScaleIp):
         conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
@@ -57,7 +58,7 @@ class SQLServerFunctions:
             #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))
             conn.autocommit = False
             cursor = conn.cursor()
-            cursor.execute("EXEC dbo.ABW_bindataInsert @emptyweight = {}, @scancode = {}, @condition = {}, @binTypeChar = {}, @scaleIp = {}".format(emptyWeight,ScanCode,Condition,binTypeChar,scaleIp))
+            cursor.execute("EXEC dbo.ABW_bindataInsert @emptyweight = {}, @scancode = {}, @condition = {}, @binTypeChar = {}, @scaleIp = [{}]".format(emptyWeight,ScanCode,Condition,binTypeChar,scaleIp))
             conn.commit()
             conn.close()
 
