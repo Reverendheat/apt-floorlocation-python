@@ -30,7 +30,7 @@ class SQLServerFunctions:
         else:
             return 'Error with PartExistsTest function'
 
-    def SubmitWipBin(self, EmpId, FilledBinWeight,WipNum,ScanCode0, ScanCode1, ScanCode2):
+    def SubmitWipBin(self, EmpId, FilledBinWeight,WipNum,ScanCode0, ScanCode1, ScanCode2,ScaleIp):
         conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
         
         #until dotenv is fixed leave below line out
@@ -39,9 +39,29 @@ class SQLServerFunctions:
         conn.autocommit = False
         cursor = conn.cursor() 
         #@PartNum parameter had to be escaped with [] for hyphens to correctly pass through
-        cursor.execute("EXEC dbo.ABW_WIP_BinInsert @EmpID = {}, @FilledBinWeight = {}, @PartNum = [{}], @ScanCode0 = [{}], @ScanCode1 = [{}], @ScanCode2 = [{}] ".format(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2))
+        cursor.execute("EXEC dbo.ABW_WIP_BinInsert @EmpID = {}, @FilledBinWeight = {}, @PartNum = [{}], @ScanCode0 = [{}], @ScanCode1 = [{}], @ScanCode2 = [{}], @ScaleIp = [{}] ".format(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2,ScaleIp))
         conn.commit()
         conn.close()   
+
+    def SubmitCondition(self, emptyWeight,ScanCode,Condition,binType,scaleIp):
+        if binType == '1':
+            binTypeChar = 'fl'
+        if binType == '2':
+            binTypeChar = 'wb'
+        if binType == '3':
+            binTypeChar = 'pl'
+        if binType == '4':
+            binTypeChar = 'gl'
+        else: 
+            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
+            #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))
+            conn.autocommit = False
+            cursor = conn.cursor()
+            cursor.execute("EXEC dbo.ABW_bindataInsert @emptyweight = {}, @scancode = {}, @condition = {}, @binTypeChar = {}, @scaleIp = {}".format(emptyWeight,ScanCode,Condition,binTypeChar,scaleIp))
+            conn.commit()
+            conn.close()
+
+    
 
 if __name__ == '__main__':
     lilbilly = SQLServerFunctions()

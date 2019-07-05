@@ -79,6 +79,8 @@ def main():
         _, boxText = listbox.get_focus()
         am = listbox_content[boxText].original_widget 
         am.set_edit_text(text)
+        global Weight
+        Weight = ''
         
 
 
@@ -119,7 +121,8 @@ def main():
         SqlFunctions = SQLServerFunctions()
         isValid = SqlFunctions.PartExistsTest(WipNum) 
         EmpId = 'xxxx'
-        FilledBinWeight = Weight
+        FilledBinWeight = '800.01'
+        #FilledBinWeight = Weight
         if (ScanCode1 == ''):
             ScanCode1 = 'NA'
         if (ScanCode2 == ''):
@@ -138,19 +141,10 @@ def main():
             ResetCode(3)
         elif isValid == False:
             ResetCode(3)
-        elif ((len(FilledBinWeight)) < 5) or ((len(FilledBinWeight)) >= 8):
+        elif ((len(Weight)) < 5) or ((len(Weight)) >= 8): #why isn't this FilledBinWeight?
            ResetCode(13)
         else:
-            SqlFunctions.SubmitWipBin(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2)
-            # conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
-            #until dotenv is fixed leave below line out
-            #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))  
-            # conn.autocommit = False
-            # cursor = conn.cursor() 
-            #@PartNum parameter had to be escaped with [] for hyphens to correctly pass through
-            # cursor.execute("EXEC dbo.ABW_WIP_BinInsert @EmpID = {}, @FilledBinWeight = {}, @PartNum = [{}], @ScanCode0 = [{}], @ScanCode1 = [{}], @ScanCode2 = [{}] ".format(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2))
-            # conn.commit()
-            # conn.close()                    
+            SqlFunctions.SubmitWipBin(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2)               
             #clear weight,Scancode, WIP #
             ResetCode(13)
             ResetCode(11)
@@ -158,6 +152,7 @@ def main():
             ResetCode(7)
             ResetCode(9)
             ResetCode(3)
+            
    
     #index numbers for reference    
     blank = urwid.Divider()
