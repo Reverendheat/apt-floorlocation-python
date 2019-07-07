@@ -30,8 +30,34 @@ class SQLServerFunctions:
         else:
             return 'Error with PartExistsTest function'
         conn.close()
+    
+    def LocationExistsTest(self, location):
+    
+        conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
+        #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))    
+        cursor = conn.cursor()
+        sql = "DECLARE @response nvarchar(50);EXEC dbo.ABW_DoesLocationExist @Location = [{}], @paramOut = @response OUT; SELECT @response AS PartConfirmed;".format(location)
+        cursor.execute(sql)
+        dirtyRecord = str(cursor.fetchone())
+        cleanRecord = self.RemoveTupleGarbage(dirtyRecord)
+        if cleanRecord == 'T':
+            return True
+        elif cleanRecord == 'F':
+            return False
+        else:
+            return 'Error with LocationExistsTest function'
+        conn.close()
 
-    def SubmitWipBin(self, EmpId, FilledBinWeight,WipNum,ScanCode0, ScanCode1, ScanCode2,ScaleIp):
+    def SubmitWipBin(self, EmpId, FilledBinWeight,WipNum,ScanCode0, ScanCode1, ScanCode2,ScaleIp,sourceLoc,destLoc,typeOfBin):
+        if typeOfBin == '1':
+            binTypeChar = 'fl'
+        if typeOfBin == '2':
+            binTypeChar = 'wb'
+        if typeOfBin == '3':
+            binTypeChar = 'pl'
+        if typeOfBin == '4':
+            binTypeChar = 'gl'
+        
         conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
         
         #until dotenv is fixed leave below line out
@@ -40,7 +66,7 @@ class SQLServerFunctions:
         conn.autocommit = False
         cursor = conn.cursor() 
         #@PartNum parameter had to be escaped with [] for hyphens to correctly pass through
-        cursor.execute("EXEC dbo.ABW_WIP_BinInsert @EmpID = {}, @FilledBinWeight = {}, @PartNum = [{}], @ScanCode0 = [{}], @ScanCode1 = [{}], @ScanCode2 = [{}], @ScaleIp = [{}] ".format(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2,ScaleIp))
+        cursor.execute("EXEC dbo.ABW_WIP_BinInsert @EmpID = {}, @FilledBinWeight = {}, @PartNum = [{}], @ScanCode0 = [{}], @ScanCode1 = [{}], @ScanCode2 = [{}], @ScaleIp = [{}], @SourceLocation = [{}], @DestinationLocation = [{}], @BinType [{}] ".format(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2,ScaleIp,sourceLoc,destLoc,typeOfBin))
         conn.commit()
         conn.close()   
 

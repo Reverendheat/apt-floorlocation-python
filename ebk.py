@@ -13,11 +13,9 @@ class MyBox(urwid.ListBox):
     def keypress(self, size, key): 
         if key == '/':
             key = 'up'
-        if key == '*':
+        if key == '+':
             key = 'down'
         if key == 'f8':
-            raise urwid.ExitMainLoop()
-        if key == '+':
             raise urwid.ExitMainLoop()
         super().keypress(size, key) 
    
@@ -79,7 +77,7 @@ def main():
         am = listbox_content[boxText].original_widget 
         am.set_edit_text(ClearedWeight) 
     
-    text_header = (u"Empty Bin Weight Utility. / for UP  * for DOWN.  Period Key exits.") #adjust this per keypad
+    text_header = (u"Empty Bin Weight Application. / for UP  + for DOWN.") 
     text_intro = [(
         u" Enter information into all fields"
         u" before  submitting.")]
@@ -91,6 +89,7 @@ def main():
     textEditScaleCode = ('editcp', u"Scale Code : ")
     textEditWeight = ('editcp', u"Bin Weight: ")  
     text_WeightButton = [u"Update Weight"]
+    text_ExitButton = [u"Exit Application"]
     def WeightButton_press(button):
         frame.footer = urwid.AttrWrap(urwid.Text(
             [u"Pressed: ", button.get_label()]), 'button')
@@ -124,8 +123,8 @@ def main():
         else:
             SqlFunctions.SubmitCondition(emptyWeight,ScanCode,Condition,binType,scaleIp)
             ResetWeight()
-            ResetCode(3)
-            ResetCode(6)
+            for i in [3,6]:
+                ResetCode
             Condition=''
     damaged_text_button_list = [u"Damaged"]
     def damaged_button_press(button):
@@ -146,9 +145,12 @@ def main():
         else:
             SqlFunctions.SubmitDamaged(emptyWeight,ScanCode,Condition,binType,scaleIp)
             ResetWeight()
-            ResetCode(3)
-            ResetCode(6)
+            for i in [3,6]:
+                ResetCode
             Condition=''
+    
+    def ExitButton_Press(button):
+        raise urwid.ExitMainLoop()
 
     blank = urwid.Divider()
     listbox_content = [
@@ -190,6 +192,12 @@ def main():
                 'buttn','buttnf') for txt in damaged_text_button_list],
             13, 3, 1, 'left'),
             left=15, right=3, min_width=13),
+        blank,
+        urwid.Padding(urwid.GridFlow(
+            [urwid.AttrWrap(urwid.Button(txt, ExitButton_Press),
+                'buttn','buttnf') for txt in text_ExitButton],
+            15, 3, 1, 'left'),
+            left=15, right=3, min_width=20), 
 
         ]
 
