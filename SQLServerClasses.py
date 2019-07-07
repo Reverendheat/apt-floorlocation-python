@@ -12,6 +12,34 @@ class SQLServerFunctions:
             input = input.replace(char,'')
         return input
 
+    def WeighLaterTest(self, binCode):
+            
+            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
+            #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS")) 
+            
+            cursor = conn.cursor()
+            sql = "DECLARE @response nvarchar(50);EXEC dbo.A[ABW_WeighLaterTest @binCode = [{}], @paramOut = @response OUT; SELECT @response AS PartConfirmed;".format(binCode)
+            cursor.execute(sql)
+            dirtyRecord = str(cursor.fetchone())
+            cleanRecord = self.RemoveTupleGarbage(dirtyRecord)
+            if cleanRecord == 'T':
+                return True
+            elif cleanRecord == 'F':
+                return False
+            else:
+                return 'Error with WeighLaterTest function'
+            conn.close()
+    
+    def UpdateWipBin(self, binCode, binWeight):     
+        conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
+        #until dotenv is fixed leave below line out
+        #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))  
+        conn.autocommit = False
+        cursor = conn.cursor() 
+        cursor.execute("EXEC dbo.ABW_WIP_BinInsert @binCode = {}, @binWeight = [{}],".format(binCode,binWeight))
+        conn.commit()
+        conn.close()   
+
 #checks part number against IM1_Inventory masterfile, returns bool value.
     def PartExistsTest(self, partNumber):
         

@@ -186,7 +186,7 @@ def main():
             else:
                 SqlFunctions.SubmitWipBin(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2,ScaleIp,sourceLoc,destLoc,typeOfBin)               
                 #clear weight,Scancode, WIP #
-                for i in [1,3,5,6,7,9,12,14,18]:
+                for i in [18,3,5,6,7,9,12,14,1]:
                     ResetCode(i)
                 FilledBinWeight = ''
                 Weight = ''
