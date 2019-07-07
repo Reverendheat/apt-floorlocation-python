@@ -130,27 +130,27 @@ def main():
         frame.footer = urwid.AttrWrap(urwid.Text(
             [u"Pressed: ", button.get_label()]), 'header')
         SqlFunctions = SQLServerFunctions()
-        ScaleIp = CollectCode(9)
-        ScanCode0 = CollectCode(3) 
+        ScaleIp = CollectCode(8)
+        ScanCode0 = CollectCode(2) 
         isBinValid= SqlFunctions.WeighLaterTest(ScanCode0)
         
         global Weight
         FilledBinWeight = Weight      
-        manualEntry = CollectCode(11)
+        manualEntry = CollectCode(10)
 
         if FilledBinWeight == '' or (len(manualEntry) > 0):
             FilledBinWeight = manualEntry
 
         elif (len(ScanCode0) != 5): #must be at least one bin
-            ResetCode(3)
+            ResetCode(2)
         elif isBinValid != True:
-            ResetCode(3)
+            ResetCode(2)
         elif ((len(FilledBinWeight)) < 1): 
-            ResetCode(11)
+            ResetCode(10)
         else:
             SqlFunctions.UpdateWipBin(ScanCode0,FilledBinWeight)               
             #clear weight,Scancode, WIP #
-            for i in [7,9,11,3]:
+            for i in [6,8,10,2]:
                 ResetCode(i)
             FilledBinWeight = ''
             Weight = ''
@@ -164,37 +164,37 @@ def main():
     listbox_content = [
         blank, #[0]
         blank, #[1]
-        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditBinCode, ScanCode0), # [3] bincode0
+        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditBinCode, ScanCode0), # [2] bincode0
             'editbx','editfc' ), left=10, width=22),
-        blank, #[4]
-         urwid.Padding(urwid.GridFlow(                           # [5] Find Bin button
+        blank, #[3]
+        urwid.Padding(urwid.GridFlow(                           # [4] Find Bin button
             [urwid.AttrWrap(urwid.Button(txt, check_button_press),
                 'buttn','buttnf') for txt in check_button_list],
             15, 3, 1, 'left'),
             left=15, right=3, min_width=13),
-        blank, #[6]
-        urwid.Padding(urwid.AttrWrap(urwid.Edit(textBinFound, binFound), #[7] Bin found text
+        blank, #[5]
+        urwid.Padding(urwid.AttrWrap(urwid.Edit(textBinFound, binFound), #[6] Bin found text
             'editbx','editfc' ), left=15, width=15),
-        blank, #[8]
-        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditScaleCode, ScaleCode), #[9] ScaleCode
+        blank, #[7]
+        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditScaleCode, ScaleCode), #[8] ScaleCode
             'editbx','editfc' ), left=10, width=31),
-        blank, #[10]
-        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditWeight, Weight), # [11] weight
+        blank, #[9]
+        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditWeight, Weight), # [10] weight
             'editbx','editfc' ), left=5, width=36),
-        urwid.Padding(urwid.Text(text_enterDash), left=2, right=2, min_width=20), #[12] enter dash text line - this is just blank
-        urwid.Padding(urwid.GridFlow(           #[13] weight button
+        urwid.Padding(urwid.Text(text_enterDash), left=2, right=2, min_width=20), #[11] enter dash text line - this is just blank
+        urwid.Padding(urwid.GridFlow(           #[12] weight button
             [urwid.AttrWrap(urwid.Button(txt, WeightButton_press),
                 'buttn','buttnf') for txt in text_WeightButton],
             20, 3, 1, 'left'),
             left=12, right=3, min_width=20),  
-        blank, #[14]
-        urwid.Padding(urwid.GridFlow(                           #[15] submit button
+        blank, #[13]
+        urwid.Padding(urwid.GridFlow(                           #[14] submit button
             [urwid.AttrWrap(urwid.Button(txt, submit_button_press),
                 'buttn','buttnf') for txt in submit_text_button_list],
             15, 3, 1, 'left'),
             left=15, right=3, min_width=13),
-        blank, #16]
-        urwid.Padding(urwid.GridFlow( #[17] exit button
+        blank, #15]
+        urwid.Padding(urwid.GridFlow( #[16] exit button
             [urwid.AttrWrap(urwid.Button(txt, ExitButton_Press),
                 'buttn','buttnf') for txt in text_ExitButton],
             15, 3, 1, 'left'),
