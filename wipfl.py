@@ -132,11 +132,7 @@ def main():
         frame.footer = urwid.AttrWrap(urwid.Text(
             [u"Pressed: ", button.get_label()]), 'header')
         SqlFunctions = SQLServerFunctions()
-
-        
-        sourceLoc = CollectCode(1)[1:] #removes leading *
-        destLoc = CollectCode(18)[1:] 
-
+        EmpId = 'xxxx'
         typeOfBin = CollectCode(9)
         WipNum = CollectCode(3)
         ScaleIp = CollectCode(12)
@@ -144,63 +140,56 @@ def main():
         ScanCode1 = CollectCode(6)
         ScanCode2 = CollectCode(7)
         
-        if (len(WipNum) != 12):
-            ResetCode(3)
+        sourceLoc = CollectCode(1)[1:] #removes leading *
+        destLoc = CollectCode(18)[1:] 
+        if (len(sourceLoc) < 2):  #sql lookups will break if passing in blank values, so validate these parameter's lengths first
+            ResetCode(1)
+        elif(len(destLoc) < 2 ):
+                ResetCode(18) 
+        elif (len(WipNum) != 12):
+                ResetCode(3) 
         else:
             isPartValid = SqlFunctions.PartExistsTest(WipNum) 
-        if (len(sourceLoc) < 2):
-            ResetCode(1)
-        else:
             isSourceLocationValid = SqlFunctions.LocationExistsTest(sourceLoc)
-        if (len(destLoc) < 2 ):
-            ResetCode(18)  
-        else:
             isDestinationLocationValid = SqlFunctions.LocationExistsTest(destLoc)
-        
-        EmpId = 'xxxx'
-        global Weight
-        FilledBinWeight = Weight      
-        manualEntry = CollectCode(14)
+            
+            global Weight
+            FilledBinWeight = Weight      
+            manualEntry = CollectCode(14)
 
-        if FilledBinWeight == '' or (len(manualEntry) > 0):
-            FilledBinWeight = manualEntry
-        if (ScanCode1 == ''):
-            ScanCode1 = 'NA'
-        if (ScanCode2 == ''):
-            ScanCode2 = 'NA'
-        if ScanCode0 == ScanCode1:
-            ResetCode(6)
-        elif typeOfBin not in ['1','2','3','4']:
-            ResetCode(9)
-        elif ScanCode1 == ScanCode2 and ScanCode1 != 'NA':
-            ResetCode(5)
-        elif (len(ScanCode0) != 5): #must be at least one bin
-            ResetCode(5)
-        elif (len(ScanCode1) != 5) and ((ScanCode1) != 'NA'): 
-            ResetCode(6)  
-        elif (len(ScanCode2) != 5) and ((ScanCode2) != 'NA'):
-            ResetCode(7)
-        #elif (len(sourceLoc) < 2):
-        #    ResetCode(1)
-        #elif (len(destLoc) < 2 ):
-        #    ResetCode(18)  
-        #elif (len(WipNum) != 12):
-        #    ResetCode(3)
-        elif isPartValid == False:
-            ResetCode(3)
-        elif isSourceLocationValid == False:
-            ResetCode(1)
-        elif isDestinationLocationValid == False:
-            ResetCode(18)
-        elif ((len(FilledBinWeight)) < 1): 
-            ResetCode(14)
-        else:
-            SqlFunctions.SubmitWipBin(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2,ScaleIp,sourceLoc,destLoc,typeOfBin)               
-            #clear weight,Scancode, WIP #
-            for i in [1,3,5,6,7,9,12,14,18]:
-                ResetCode(i)
-            FilledBinWeight = ''
-            Weight = ''
+            if FilledBinWeight == '' or (len(manualEntry) > 0):
+                FilledBinWeight = manualEntry
+            if (ScanCode1 == ''):
+                ScanCode1 = 'NA'
+            if (ScanCode2 == ''):
+                ScanCode2 = 'NA'
+            if ScanCode0 == ScanCode1:
+                ResetCode(6)
+            elif typeOfBin not in ['1','2','3','4']:
+                ResetCode(9)
+            elif ScanCode1 == ScanCode2 and ScanCode1 != 'NA':
+                ResetCode(5)
+            elif (len(ScanCode0) != 5): #must be at least one bin
+                ResetCode(5)
+            elif (len(ScanCode1) != 5) and ((ScanCode1) != 'NA'): 
+                ResetCode(6)  
+            elif (len(ScanCode2) != 5) and ((ScanCode2) != 'NA'):
+                ResetCode(7)
+            elif isPartValid == False:
+                ResetCode(3)
+            elif isSourceLocationValid == False:
+                ResetCode(1)
+            elif isDestinationLocationValid == False:
+                ResetCode(18)
+            elif ((len(FilledBinWeight)) < 1): 
+                ResetCode(14)
+            else:
+                SqlFunctions.SubmitWipBin(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2,ScaleIp,sourceLoc,destLoc,typeOfBin)               
+                #clear weight,Scancode, WIP #
+                for i in [1,3,5,6,7,9,12,14,18]:
+                    ResetCode(i)
+                FilledBinWeight = ''
+                Weight = ''
     
     def ExitButton_Press(button):
         raise urwid.ExitMainLoop()
