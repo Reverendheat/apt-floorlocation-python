@@ -73,6 +73,8 @@ def main():
         listbox.set_focus(10) 
         global ClearedWeight
         ClearedWeight = ""
+        global Weight
+        Weight = ""
         _, boxText = listbox.get_focus() 
         am = listbox_content[boxText].original_widget 
         am.set_edit_text(ClearedWeight) 
@@ -123,8 +125,8 @@ def main():
         else:
             SqlFunctions.SubmitCondition(emptyWeight,ScanCode,Condition,binType,scaleIp)
             ResetWeight()
-            for i in [3,6]:
-                ResetCode
+            for i in [10,5,8,3]:
+                ResetCode(i)
             Condition=''
     damaged_text_button_list = [u"Damaged"]
     def damaged_button_press(button):
@@ -145,8 +147,8 @@ def main():
         else:
             SqlFunctions.SubmitDamaged(emptyWeight,ScanCode,Condition,binType,scaleIp)
             ResetWeight()
-            for i in [3,6]:
-                ResetCode
+            for i in [10,5,8,3]:
+                ResetCode(i)
             Condition=''
     
     def ExitButton_Press(button):
