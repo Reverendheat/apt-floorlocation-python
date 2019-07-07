@@ -138,15 +138,25 @@ def main():
         destLoc = CollectCode(18)[1:] 
 
         typeOfBin = CollectCode(9)
-        
+        WipNum = CollectCode(3)
+        ScaleIp = CollectCode(12)
         ScanCode0 = CollectCode(5) 
         ScanCode1 = CollectCode(6)
         ScanCode2 = CollectCode(7)
-        WipNum = CollectCode(3)
-        ScaleIp = CollectCode(12)
-        isPartValid = SqlFunctions.PartExistsTest(WipNum) 
-        isSourceLocationValid = SqlFunctions.LocationExistsTest(sourceLoc)
-        isDestinationLocationValid = SqlFunctions.LocationExistsTest(destLoc)
+        
+        if (len(WipNum) != 12):
+            ResetCode(3)
+        else:
+            isPartValid = SqlFunctions.PartExistsTest(WipNum) 
+        if (len(sourceLoc) < 2):
+            ResetCode(1)
+        else:
+            isSourceLocationValid = SqlFunctions.LocationExistsTest(sourceLoc)
+        if (len(destLoc) < 2 ):
+            ResetCode(18)  
+        else:
+            isDestinationLocationValid = SqlFunctions.LocationExistsTest(destLoc)
+        
         EmpId = 'xxxx'
         global Weight
         FilledBinWeight = Weight      
@@ -169,9 +179,13 @@ def main():
         elif (len(ScanCode1) != 5) and ((ScanCode1) != 'NA'): 
             ResetCode(6)  
         elif (len(ScanCode2) != 5) and ((ScanCode2) != 'NA'):
-            ResetCode(7)   
-        elif (len(WipNum) != 12):
-            ResetCode(3)
+            ResetCode(7)
+        #elif (len(sourceLoc) < 2):
+        #    ResetCode(1)
+        #elif (len(destLoc) < 2 ):
+        #    ResetCode(18)  
+        #elif (len(WipNum) != 12):
+        #    ResetCode(3)
         elif isPartValid == False:
             ResetCode(3)
         elif isSourceLocationValid == False:
