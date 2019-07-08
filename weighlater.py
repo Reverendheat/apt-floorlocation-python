@@ -3,6 +3,10 @@ import urwid.raw_display
 import urwid.web_display
 import socket
 import pyodbc
+#from dotenv import load_dotenv
+#load_dotenv()
+#import os
+
 
 from SQLServerClasses import SQLServerFunctions
 
