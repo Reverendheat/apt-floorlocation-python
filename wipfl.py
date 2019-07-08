@@ -117,8 +117,8 @@ def main():
         listbox.set_focus(14) #index
         global Weight
         #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        Weight = '800.01'
-        #Weight = CollectWeight(ScaleCode) 
+        #Weight = '800.01'
+        Weight = CollectWeight(ScaleCode) 
         _, boxText = listbox.get_focus() 
         am = listbox_content[boxText].original_widget 
         am.set_edit_text(Weight)

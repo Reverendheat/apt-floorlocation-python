@@ -93,6 +93,7 @@ def main():
     text_WeightButton = [u"Update Weight"]
     text_ExitButton = [u"Exit Application"]
     def WeightButton_press(button):
+        ScaleCode = CollectCode(8)
         frame.footer = urwid.AttrWrap(urwid.Text(
             [u"Pressed: ", button.get_label()]), 'button')
         listbox.set_focus(10) 
