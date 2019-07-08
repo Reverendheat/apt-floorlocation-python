@@ -175,13 +175,15 @@ def main():
                 ResetCode(6)  
             elif (len(ScanCode2) != 5) and ((ScanCode2) != 'NA'):
                 ResetCode(7)
+            elif ScanCode0 == ScanCode2:
+                ResetCode(5)
             elif isPartValid == False:
                 ResetCode(3)
             elif isSourceLocationValid == False:
                 ResetCode(1)
             elif isDestinationLocationValid == False:
                 ResetCode(18)
-            elif ((len(FilledBinWeight)) < 1): 
+            elif ((len(FilledBinWeight)) < 1) or FilledBinWeight == '' or FilledBinWeight == 'SktCnctErr!' or FilledBinWeight == 'SktRecErr!' or ((len(FilledBinWeight)) > 7): 
                 ResetCode(14)
             else:
                 SqlFunctions.SubmitWipBin(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2,ScaleIp,sourceLoc,destLoc,typeOfBin)               

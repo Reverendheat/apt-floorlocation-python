@@ -143,7 +143,7 @@ def main():
             ResetCode(2)
         elif isBinValid != True:
             ResetCode(2)
-        elif ((len(FilledBinWeight)) < 1): 
+        elif ((len(FilledBinWeight)) < 1) or FilledBinWeight == '' or FilledBinWeight == 'SktCnctErr!' or FilledBinWeight == 'SktRecErr!' or ((len(FilledBinWeight)) > 7):
             ResetCode(10)
         else:
             SqlFunctions.UpdateWipBin(ScanCode0,FilledBinWeight)               

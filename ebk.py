@@ -114,6 +114,7 @@ def main():
         ScanCode = CollectCode(3) 
         binType = CollectCode(5)
         scaleIp = CollectCode(8)
+        global Weight
         emptyWeight = Weight
         SqlFunctions = SQLServerFunctions()
         Condition = 'acceptable'
@@ -121,14 +122,15 @@ def main():
             ResetCode(5)
         elif (len(ScanCode) != 5):
             ResetCode(3)
-        elif ((len(emptyWeight)) < 5) or ((len(emptyWeight)) >= 8): 
+        elif ((len(emptyWeight)) < 5) or ((len(emptyWeight)) > 7): 
             ResetWeight()
         else:
             SqlFunctions.SubmitCondition(emptyWeight,ScanCode,Condition,binType,scaleIp)
             ResetWeight()
             for i in [10,5,8,3]:
                 ResetCode(i)
-            Condition=''
+            Condition = ''
+            Weight = ''
     damaged_text_button_list = [u"Damaged"]
     def damaged_button_press(button):
         frame.footer = urwid.AttrWrap(urwid.Text(
@@ -136,6 +138,7 @@ def main():
         ScanCode = CollectCode(3) 
         binType = CollectCode(5)
         scaleIp = CollectCode(8)
+        global Weight
         emptyWeight = Weight 
         SqlFunctions = SQLServerFunctions()
         Condition = 'damaged'
@@ -143,14 +146,15 @@ def main():
             ResetCode(5)
         elif (len(ScanCode) != 5):
             ResetCode(3)
-        elif ((len(Weight)) < 5) or ((len(Weight)) >= 8):
+        elif ((len(Weight)) < 5) or ((len(Weight)) > 7):
             ResetWeight()
         else:
             SqlFunctions.SubmitDamaged(emptyWeight,ScanCode,Condition,binType,scaleIp)
             ResetWeight()
             for i in [10,5,8,3]:
                 ResetCode(i)
-            Condition=''
+            Condition= ''
+            Weight = ''
     
     def ExitButton_Press(button):
         raise urwid.ExitMainLoop()
