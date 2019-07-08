@@ -114,15 +114,18 @@ def main():
         frame.footer = urwid.AttrWrap(urwid.Text(
             [u"Pressed: ", button.get_label()]), 'button')
         listbox.set_focus(6) #index
-        SqlFunctions = SQLServerFunctions()
-        isBinValid= SqlFunctions.WeighLaterTest(binCode)
-        if isBinValid == True:
-            checkBoxText = 'Bin Found'
-        elif isBinValid == False:
-            checkBoxText = 'Bin not Found'
-        _, boxText = listbox.get_focus() 
-        am = listbox_content[boxText].original_widget 
-        am.set_edit_text(checkBoxText)
+        if binCode == '':
+            ResetCode(2)
+        else:
+            SqlFunctions = SQLServerFunctions()
+            isBinValid= SqlFunctions.WeighLaterTest(binCode)
+            if isBinValid == True:
+                checkBoxText = 'Bin Found'
+            elif isBinValid == False:
+                checkBoxText = 'Bin not Found'
+            _, boxText = listbox.get_focus() 
+            am = listbox_content[boxText].original_widget 
+            am.set_edit_text(checkBoxText)
         
     
     text_divider =  [u"Press SUBMIT to insert data and reset."]
