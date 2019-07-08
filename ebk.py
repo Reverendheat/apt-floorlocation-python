@@ -118,6 +118,8 @@ def main():
         emptyWeight = Weight
         SqlFunctions = SQLServerFunctions()
         Condition = 'acceptable'
+        if scaleIp == '':
+                scaleIp = '-'
         if binType not in ['1','2','3','4']:
             ResetCode(5)
         elif (len(ScanCode) != 5):
@@ -142,6 +144,8 @@ def main():
         emptyWeight = Weight 
         SqlFunctions = SQLServerFunctions()
         Condition = 'damaged'
+        if scaleIp == '':
+                scaleIp = '-'
         if binType not in ['1','2','3','4']:
             ResetCode(5)
         elif (len(ScanCode) != 5):

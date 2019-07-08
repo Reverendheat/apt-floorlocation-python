@@ -135,7 +135,8 @@ def main():
         global Weight
         FilledBinWeight = Weight      
         manualEntry = CollectCode(10)
-
+        if ScaleIp == '':
+                ScaleIp = '-'
         if FilledBinWeight == '' or (len(manualEntry) > 0):
             FilledBinWeight = manualEntry
 
