@@ -4,9 +4,9 @@ import urwid.web_display
 import socket
 import pyodbc 
 from SQLServerClasses import SQLServerFunctions
-#from dotenv import load_dotenv
-#load_dotenv()
-#import os
+from dotenv import load_dotenv
+load_dotenv()
+import os
 
 class MyBox(urwid.ListBox):
 

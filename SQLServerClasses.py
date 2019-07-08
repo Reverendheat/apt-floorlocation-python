@@ -1,7 +1,7 @@
 import pyodbc
-#from dotenv import load_dotenv
-#load_dotenv()
-#import os
+from dotenv import load_dotenv
+load_dotenv()
+import os
 class SQLServerFunctions:
 
 
@@ -14,8 +14,8 @@ class SQLServerFunctions:
 
     def WeighLaterTest(self, binCode):
             
-            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
-            #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS")) 
+            #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
+            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS")) 
             
             cursor = conn.cursor()
             sql = "DECLARE @response nvarchar(50);EXEC dbo.ABW_WeighLaterTest @binCode = [{}], @paramOut = @response OUT; SELECT @response AS PartConfirmed;".format(binCode)
@@ -31,9 +31,8 @@ class SQLServerFunctions:
             conn.close()
     
     def UpdateWipBin(self, binCode, binWeight):     
-        conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
-        #until dotenv is fixed leave below line out
-        #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))  
+        #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
+        conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))  
         conn.autocommit = False
         cursor = conn.cursor() 
         cursor.execute("EXEC dbo.ABW_UpdateWipBinData @binCode = {}, @binWeight = [{}];".format(binCode,binWeight))
@@ -42,10 +41,8 @@ class SQLServerFunctions:
 
 #checks part number against IM1_Inventory masterfile, returns bool value.
     def PartExistsTest(self, partNumber):
-        
-        conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
-        #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS")) 
-        
+        #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
+        conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS")) 
         cursor = conn.cursor()
         sql = "DECLARE @response nvarchar(50);EXEC dbo.ABW_DoesItemNumExist @partNum = [{}], @paramOut = @response OUT; SELECT @response AS PartConfirmed;".format(partNumber)
         cursor.execute(sql)
@@ -60,9 +57,8 @@ class SQLServerFunctions:
         conn.close()
     
     def LocationExistsTest(self, location):
-    
-        conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
-        #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))    
+        #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
+        conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))    
         cursor = conn.cursor()
         sql = "DECLARE @response nvarchar(50);EXEC dbo.ABW_DoesLocationExist @Location = [{}], @paramOut = @response OUT; SELECT @response AS PartConfirmed;".format(location)
         cursor.execute(sql)
@@ -86,10 +82,10 @@ class SQLServerFunctions:
         if typeOfBin == '4':
             binTypeChar = 'gl'
         
-        conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
+        #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
         
         #until dotenv is fixed leave below line out
-        #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))  
+        conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))  
         
         conn.autocommit = False
         cursor = conn.cursor() 
@@ -108,8 +104,8 @@ class SQLServerFunctions:
         if binType == '4':
             binTypeChar = 'gl'
         else: 
-            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
-            #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))
+            #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
+            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))
             conn.autocommit = False
             cursor = conn.cursor()
             cursor.execute("EXEC dbo.ABW_bindataInsert @emptyweight = {}, @scancode = {}, @condition = {}, @binTypeChar = {}, @scaleIp = [{}]".format(emptyWeight,ScanCode,Condition,binTypeChar,scaleIp))
