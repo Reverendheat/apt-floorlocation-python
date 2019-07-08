@@ -4,6 +4,7 @@ import datetime
 import os
 import wipfl
 import ebk
+import weighlater
 from colorama import init
 from colorama import Fore, Back, Style
 init()
@@ -51,6 +52,7 @@ clearInput = "CLEARINPUT"
 startOver = "STARTOVER"
 weighBIN = "WEIGHBIN"
 wipFL = "WIPFL"
+weighLater = "WEIGHLATER"
 
 #Main loop
 print(Fore.GREEN + title + Style.RESET_ALL)
@@ -115,6 +117,10 @@ def mainFunction():
         mainFunction()
     elif (wipFL in mainInput):
         wipfl.main()
+        os.system('clear')
+        mainFunction()
+    elif (weighLater in mainInput):
+        weighlater.main()
         os.system('clear')
         mainFunction()
     elif not any(word in mainInput for word in locationWords):
