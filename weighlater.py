@@ -93,10 +93,10 @@ def main():
     text_ExitButton = [u"Exit Application"]
 
     def WeightButton_press(button):
-        ScaleCode = CollectCode(9) #index
+        ScaleCode = CollectCode(8) #index
         frame.footer = urwid.AttrWrap(urwid.Text(
             [u"Pressed: ", button.get_label()]), 'button')
-        listbox.set_focus(11) #index
+        listbox.set_focus(10) #index
         global Weight
         #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         Weight = '800.01'
@@ -107,11 +107,11 @@ def main():
 
     check_button_list = [u"Find Bin"]
     def check_button_press(button):
-        binCode = CollectCode(3) #index
+        binCode = CollectCode(2) #index
         checkBoxText = ''
         frame.footer = urwid.AttrWrap(urwid.Text(
             [u"Pressed: ", button.get_label()]), 'button')
-        listbox.set_focus(7) #index
+        listbox.set_focus(6) #index
         SqlFunctions = SQLServerFunctions()
         isBinValid= SqlFunctions.WeighLaterTest(binCode)
         if isBinValid == True:
@@ -141,7 +141,7 @@ def main():
         if FilledBinWeight == '' or (len(manualEntry) > 0):
             FilledBinWeight = manualEntry
 
-        elif (len(ScanCode0) != 5): #must be at least one bin
+        if (len(ScanCode0) != 5): #must be at least one bin
             ResetCode(2)
         elif isBinValid != True:
             ResetCode(2)

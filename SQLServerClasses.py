@@ -18,7 +18,7 @@ class SQLServerFunctions:
             #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS")) 
             
             cursor = conn.cursor()
-            sql = "DECLARE @response nvarchar(50);EXEC dbo.A[ABW_WeighLaterTest @binCode = [{}], @paramOut = @response OUT; SELECT @response AS PartConfirmed;".format(binCode)
+            sql = "DECLARE @response nvarchar(50);EXEC dbo.ABW_WeighLaterTest @binCode = [{}], @paramOut = @response OUT; SELECT @response AS PartConfirmed;".format(binCode)
             cursor.execute(sql)
             dirtyRecord = str(cursor.fetchone())
             cleanRecord = self.RemoveTupleGarbage(dirtyRecord)
