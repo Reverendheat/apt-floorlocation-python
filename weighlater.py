@@ -50,8 +50,6 @@ def main():
             except:
                 return('SktRecErr!')
         except:
-            #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            #return('800.01')
             return('SktCnctErr!')
          
     def CollectCode(bincodeindex):
@@ -99,8 +97,8 @@ def main():
         listbox.set_focus(10) #index
         global Weight
         #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        Weight = '800.01'
-        #Weight = CollectWeight(ScaleCode) 
+        #Weight = '800.01'
+        Weight = CollectWeight(ScaleCode) 
         _, boxText = listbox.get_focus() 
         am = listbox_content[boxText].original_widget 
         am.set_edit_text(Weight)

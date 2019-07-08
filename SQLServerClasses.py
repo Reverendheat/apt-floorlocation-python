@@ -36,7 +36,7 @@ class SQLServerFunctions:
         #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))  
         conn.autocommit = False
         cursor = conn.cursor() 
-        cursor.execute("EXEC dbo.ABW_WIP_BinInsert @binCode = {}, @binWeight = [{}],".format(binCode,binWeight))
+        cursor.execute("EXEC dbo.ABW_UpdateWipBinData @binCode = {}, @binWeight = [{}];".format(binCode,binWeight))
         conn.commit()
         conn.close()   
 
