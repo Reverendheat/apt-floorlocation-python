@@ -147,7 +147,8 @@ def main():
         elif(len(destLoc) < 2 ):
                 ResetCode(18) 
         elif (len(WipNum) != 12):
-                ResetCode(3) 
+                ResetCode(3)
+         
         else:
             isPartValid = SqlFunctions.PartExistsTest(WipNum) 
             isSourceLocationValid = SqlFunctions.LocationExistsTest(sourceLoc)
@@ -156,7 +157,8 @@ def main():
             global Weight
             FilledBinWeight = Weight      
             manualEntry = CollectCode(14)
-
+            if ScaleIp == '':
+                ScaleIp = '-'
             if FilledBinWeight == '' or (len(manualEntry) > 0):
                 FilledBinWeight = manualEntry
             if (ScanCode1 == ''):
