@@ -3,45 +3,44 @@ import urwid.raw_display
 import urwid.web_display
 import socket
 import pyodbc 
-from dotenv import load_dotenv
-load_dotenv()
-import os
-#new test comment 6/20/2019
-#ayyee
-#test change @ 2:46 PM 
-#test chanage @ 2:58 PM
-#assign key remappings here, this overrides the keypress method of urwid.ListBox
+from SQLServerClasses import SQLServerFunctions
+#from dotenv import load_dotenv
+#load_dotenv()
+#import os
+
 class MyBox(urwid.ListBox):
 
     def keypress(self, size, key): 
         if key == '/':
             key = 'up'
-        if key == '*':
+        if key == '+':
             key = 'down'
         if key == 'f8':
-            raise urwid.ExitMainLoop()
-        if key == '.':
             raise urwid.ExitMainLoop()
         super().keypress(size, key) 
    
 global ScanCode
 ScanCode = ''
-
+global BinType
+BinType = ''
 global Weight
 Weight = ''
-
 global ClearedWeight
 ClearedWeight = ''
+global Cleared
+Cleared = ""
+global ScaleCode
+ScaleCode = ''
 
 def main(): 
-    print(os.getenv("NEWMAS_DB_PASS"))
-    #makes scale connection, grabs the weight, and closes the connection.
-    def CollectWeight():
+       #makes scale connection, grabs the weight, and closes the connection.
+    def CollectWeight(ScaleCode):
         s = socket.socket()
         s.settimeout(2)
         port = 23
         try:
-            s.connect(('10.79.3.33', 23))
+            s.connect((ScaleCode,23))
+            #s.connect(('10.79.3.33', 23))
             s.settimeout(None)
             try:
                 scaleData1  = s.recv(19) #19 bytes to trim off lbs, tare, and net weight information
@@ -52,45 +51,56 @@ def main():
             except:
                 return('SktRecErr!')
         except:
+            #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            #return('800.01')
             return('SktCnctErr!')
         
-    
-    
-    def CollectCode():
-        listbox.set_focus(3)
+    def CollectCode(binCodeIndex):
+        listbox.set_focus(binCodeIndex)
         _, boxText = listbox.get_focus() 
         code = listbox_content[boxText].original_widget.base_widget._edit_text
         return code
     
-    def ResetCode():
-        listbox.set_focus(2) #need to hop around here - directly focusing to the 3rd field clears the value, but does not update the graphic
-        listbox.set_focus(3)
+    def ResetCode(codeindex): 
+        listbox.set_focus(codeindex-1) #need to hop around here - directly focusing to the 3rd field clears the value, but does not update the graphic
+        listbox.set_focus(codeindex)
         _, boxText = listbox.get_focus() 
-        listbox_content[boxText].original_widget.base_widget._edit_text = ""
+        am = listbox_content[boxText].original_widget 
+        am.set_edit_text(Cleared) 
         
 
     def ResetWeight():
-        listbox.set_focus(4) 
+        listbox.set_focus(10) 
         global ClearedWeight
         ClearedWeight = ""
+        global Weight
+        Weight = ""
         _, boxText = listbox.get_focus() 
         am = listbox_content[boxText].original_widget 
         am.set_edit_text(ClearedWeight) 
     
-    text_header = (u"Empty Bin Weight Utility. / for UP  * for DOWN.  Period Key exits.") #adjust this per keypad
+    text_header = (u"Empty Bin Weight Application. / for UP  + for DOWN.") 
     text_intro = [(
         u" Enter information into all fields"
-        u" before  mitting.")]  
+        u" before  submitting.")]
+    text_bintypes = [(
+        u" 1 = Flat Bin | 2 = Wheel Bin |"
+        u" 3 = Plastic Bin | 4 = Gaylord")]    
     textEditBinCode = ('editcp', u"Bin Code: ")
+    textEditBinType = ('editcp', u"Bin Type: ")
+    textEditScaleCode = ('editcp', u"Scale Code : ")
     textEditWeight = ('editcp', u"Bin Weight: ")  
-    
     text_WeightButton = [u"Update Weight"]
+    text_ExitButton = [u"Exit Application"]
     def WeightButton_press(button):
+        ScaleCode = CollectCode(8)
         frame.footer = urwid.AttrWrap(urwid.Text(
             [u"Pressed: ", button.get_label()]), 'button')
-        listbox.set_focus(4) #4 sets focus on listbox index of the weight text
+        listbox.set_focus(10) 
         global Weight 
-        Weight = CollectWeight() 
+        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        #Weight = '800.01'
+        Weight = CollectWeight(ScaleCode) 
         _, boxText = listbox.get_focus() 
         am = listbox_content[boxText].original_widget 
         am.set_edit_text(Weight) 
@@ -101,58 +111,80 @@ def main():
     def acceptable_button_press(button):
         frame.footer = urwid.AttrWrap(urwid.Text(
             [u"Pressed: ", button.get_label()]), 'header')
-        ScanCode = CollectCode() 
+        ScanCode = CollectCode(3) 
+        binType = CollectCode(5)
+        scaleIp = CollectCode(8)
+        global Weight
         emptyWeight = Weight
-        if (len(ScanCode) != 5):
-            ResetCode()
-        elif ((len(Weight)) < 5) or ((len(Weight)) >= 8):
+        SqlFunctions = SQLServerFunctions()
+        Condition = 'acceptable'
+        if scaleIp == '':
+                scaleIp = '-'
+        if binType not in ['1','2','3','4']:
+            ResetCode(5)
+        elif (len(ScanCode) != 5):
+            ResetCode(3)
+        elif ((len(emptyWeight)) < 5) or ((len(emptyWeight)) > 7): 
             ResetWeight()
         else:
-            Condition = 'acceptable'
-            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS")) 
-            conn.autocommit = False
-            cursor = conn.cursor()
-            cursor.execute("EXEC dbo.ABW_EmptyBinWeightsInsert @emptyweight = {}, @scancode = {}, @condition = {}".format(emptyWeight,ScanCode,Condition))
-            conn.commit()
-            conn.close()
-            #clear weight,Scancode, condition
+            SqlFunctions.SubmitCondition(emptyWeight,ScanCode,Condition,binType,scaleIp)
             ResetWeight()
-            ResetCode()
-            Condition=''
+            for i in [10,5,8,3]:
+                ResetCode(i)
+            Condition = ''
+            Weight = ''
     damaged_text_button_list = [u"Damaged"]
     def damaged_button_press(button):
         frame.footer = urwid.AttrWrap(urwid.Text(
             [u"Pressed: ", button.get_label()]), 'header')
-        ScanCode = CollectCode()
+        ScanCode = CollectCode(3) 
+        binType = CollectCode(5)
+        scaleIp = CollectCode(8)
+        global Weight
         emptyWeight = Weight 
-        if (len(ScanCode) != 5):
-            ResetCode()
-        elif ((len(Weight)) < 5) or ((len(Weight)) >= 8):
+        SqlFunctions = SQLServerFunctions()
+        Condition = 'damaged'
+        if scaleIp == '':
+                scaleIp = '-'
+        if binType not in ['1','2','3','4']:
+            ResetCode(5)
+        elif (len(ScanCode) != 5):
+            ResetCode(3)
+        elif ((len(Weight)) < 5) or ((len(Weight)) > 7):
             ResetWeight()
         else:
-            Condition = 'damaged'
-            conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))
-            conn.autocommit = False
-            cursor = conn.cursor()
-            cursor.execute("EXEC dbo.ABW_EmptyBinWeightsInsert @emptyweight = {}, @scancode = {}, @condition = {}".format(emptyWeight,ScanCode,Condition))
-            conn.commit()
-            conn.close()
-            #clear weight,Scancode, condition
+            SqlFunctions.SubmitDamaged(emptyWeight,ScanCode,Condition,binType,scaleIp)
             ResetWeight()
-            ResetCode()
-            Condition=''
-
+            for i in [10,5,8,3]:
+                ResetCode(i)
+            Condition= ''
+            Weight = ''
     
+    def ExitButton_Press(button):
+        raise urwid.ExitMainLoop()
+
     blank = urwid.Divider()
     listbox_content = [
-        blank,
-        urwid.Padding(urwid.Text(text_intro), left=2, right=2, min_width=20),
-        blank,
-        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditBinCode, ScanCode), #bincode
+        blank, #0
+        urwid.Padding(urwid.Text(text_intro), left=2, right=2, min_width=20), #1
+        blank, #2
+        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditBinCode, ScanCode), #3 bincode 
             'editbx','editfc' ), left=10, width=20),
-        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditWeight, Weight), #weight
+        blank,#4
+
+        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditBinType, BinType), #5 bintype
             'editbx','editfc' ), left=10, width=20),
-        blank,
+        
+        urwid.Padding(urwid.Text(text_bintypes), left=2, right=2, min_width=20), #6 bin types description
+
+        blank, #7
+        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditScaleCode, ScaleCode), #8 Scale ip address
+            'editbx','editfc' ), left=10, width=31),
+        blank,#9
+
+        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditWeight, Weight), #10 weight
+            'editbx','editfc' ), left=10, width=20),
+        blank, 
         urwid.Padding(urwid.GridFlow(
             [urwid.AttrWrap(urwid.Button(txt, WeightButton_press),
                 'buttn','buttnf') for txt in text_WeightButton],
@@ -171,9 +203,14 @@ def main():
                 'buttn','buttnf') for txt in damaged_text_button_list],
             13, 3, 1, 'left'),
             left=15, right=3, min_width=13),
+        blank,
+        urwid.Padding(urwid.GridFlow(
+            [urwid.AttrWrap(urwid.Button(txt, ExitButton_Press),
+                'buttn','buttnf') for txt in text_ExitButton],
+            15, 3, 1, 'left'),
+            left=15, right=3, min_width=20), 
 
         ]
-
 
     header = urwid.AttrWrap(urwid.Text(text_header), 'header')
     listbox = MyBox(urwid.SimpleListWalker(listbox_content)) 
@@ -191,8 +228,7 @@ def main():
         ('buttn','black','dark cyan'),
         ('buttnf','white','dark blue','bold'),
         ]
-
-    
+ 
     # use appropriate Screen class
     if urwid.web_display.is_web_request():
         screen = urwid.web_display.Screen()
@@ -200,7 +236,6 @@ def main():
         screen = urwid.raw_display.Screen()
 
     urwid.MainLoop(frame, palette, screen).run()
-
 
 def setup():
     urwid.web_display.set_preferences("Urwid Tour")
