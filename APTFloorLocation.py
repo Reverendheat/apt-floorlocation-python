@@ -15,7 +15,17 @@ from config import settings
 db = sqlite3.connect('floorlocation.db')
 cursor = db.cursor()
 
-#Check to see if new column for cartnumbers exist, if not add it
+#Check to see if new column for cartnumbers exist, if not add it, also check if Adams wipFL table exists, if not add it.
+cursor.execute('PRAGMA table_info(wipfl);')
+columnInfo = cursor.fetchall()
+if  len(columnInfo) == 0:
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS wipfl (
+        empID TEXT, FilledBinWeight TEXT, WipNum TEXT, ScanCode0 TEXT, ScanCode1 TEXT, ScanCode2 TEXT, ScaleIp TEXT, sourceLoc TEXT, destLoc TEXT, typeOfBin TEXT)
+    ''')
+    print(Fore.YELLOW + Style.BRIGHT + "DB - Added wipfl table")
+else:
+    print(Fore.GREEN + Style.BRIGHT + "DB - wipfl table OK")
 cursor.execute('PRAGMA table_info(moves);')
 columnInfo = cursor.fetchall()
 if  len(columnInfo) == 0:
@@ -23,14 +33,14 @@ if  len(columnInfo) == 0:
     CREATE TABLE IF NOT EXISTS moves (
         date TEXT, bin1 INTEGER, bin2 INTEGER, bin3 INTEGER, bin4 INTEGER, source TEXT, destination TEXT, cart INTEGER)
     ''')
-    print(Fore.YELLOW + Style.BRIGHT + "Created new FloorLocation Database")
+    print(Fore.YELLOW + Style.BRIGHT + "DB - Added moves table")
 else:
     lastColumn = columnInfo[-1][1]
     if lastColumn != "cart":
         cursor.execute('ALTER TABLE moves ADD COLUMN cart INTEGER')
         print(Fore.YELLOW + Style.BRIGHT + "Added cart column to existing FloorLocation Database")
     else:
-        print(Fore.GREEN + Style.BRIGHT + "Database up to date")
+        print(Fore.GREEN + Style.BRIGHT + "DB - moves table OK")
 
 #Variable declaration
 title = "APT Floor Tracking Version: " + settings['Version']

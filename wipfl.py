@@ -150,9 +150,9 @@ def main():
                 ResetCode(3)
          
         else:
-            isPartValid = SqlFunctions.PartExistsTest(WipNum) 
-            isSourceLocationValid = SqlFunctions.LocationExistsTest(sourceLoc)
-            isDestinationLocationValid = SqlFunctions.LocationExistsTest(destLoc)
+            # isPartValid = SqlFunctions.PartExistsTest(WipNum) 
+            # isSourceLocationValid = SqlFunctions.LocationExistsTest(sourceLoc)
+            # isDestinationLocationValid = SqlFunctions.LocationExistsTest(destLoc)
             
             global Weight
             FilledBinWeight = Weight      
@@ -179,12 +179,12 @@ def main():
                 ResetCode(7)
             elif ScanCode0 == ScanCode2:
                 ResetCode(5)
-            elif isPartValid == False:
-                ResetCode(3)
-            elif isSourceLocationValid == False:
-                ResetCode(1)
-            elif isDestinationLocationValid == False:
-                ResetCode(18)
+            # elif isPartValid == False:
+            #     ResetCode(3)
+            # elif isSourceLocationValid == False:
+            #     ResetCode(1)
+            # elif isDestinationLocationValid == False:
+            #     ResetCode(18)
             elif ((len(FilledBinWeight)) < 1) or FilledBinWeight == '' or FilledBinWeight == 'SktCnctErr!' or FilledBinWeight == 'SktRecErr!' or ((len(FilledBinWeight)) > 7): 
                 ResetCode(14)
             else:

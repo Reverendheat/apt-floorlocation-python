@@ -1,9 +1,9 @@
 import pyodbc
+import sqlite3
 from dotenv import load_dotenv
 load_dotenv()
 import os
 class SQLServerFunctions:
-
 
 #pyodbc can only return tuple values from SQL Server, use this to clean them up.
     def RemoveTupleGarbage(self, input):
@@ -73,6 +73,8 @@ class SQLServerFunctions:
         conn.close()
 
     def SubmitWipBin(self, EmpId, FilledBinWeight,WipNum,ScanCode0, ScanCode1, ScanCode2,ScaleIp,sourceLoc,destLoc,typeOfBin):
+        db = sqlite3.connect('floorlocation.db')
+        cursor = db.cursor()
         if typeOfBin == '1':
             binTypeChar = 'fl'
         if typeOfBin == '2':
@@ -81,18 +83,20 @@ class SQLServerFunctions:
             binTypeChar = 'pl'
         if typeOfBin == '4':
             binTypeChar = 'gl'
-        
+        #Connect to local SQLITE DB and store values
+        cursor.execute('INSERT INTO wipfl(empID, FilledBinWeight, WipNum, ScanCode0, ScanCode1, ScanCode2, ScaleIp, sourceLoc, destLoc, typeOfBin) VALUES(?,?,?,?,?,?,?,?,?,?)',(EmpId, FilledBinWeight, WipNum, ScanCode0, ScanCode1, ScanCode2,ScaleIp,sourceLoc,destLoc,typeOfBin))
+        db.commit()
         #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
         
         #until dotenv is fixed leave below line out
-        conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))  
+        # conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))  
         
-        conn.autocommit = False
-        cursor = conn.cursor() 
-        #@PartNum parameter had to be escaped with [] for hyphens to correctly pass through
-        cursor.execute("EXEC dbo.ABW_WIP_BinInsert @EmpID = {}, @FilledBinWeight = [{}], @PartNum = [{}], @ScanCode0 = [{}], @ScanCode1 = [{}], @ScanCode2 = [{}], @ScaleIp = [{}], @SourceLocation = [{}], @DestinationLocation = [{}], @BinType = [{}] ".format(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2,ScaleIp,sourceLoc,destLoc,binTypeChar))
-        conn.commit()
-        conn.close()   
+        # conn.autocommit = False
+        # cursor = conn.cursor() 
+        # #@PartNum parameter had to be escaped with [] for hyphens to correctly pass through
+        # cursor.execute("EXEC dbo.ABW_WIP_BinInsert @EmpID = {}, @FilledBinWeight = [{}], @PartNum = [{}], @ScanCode0 = [{}], @ScanCode1 = [{}], @ScanCode2 = [{}], @ScaleIp = [{}], @SourceLocation = [{}], @DestinationLocation = [{}], @BinType = [{}] ".format(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2,ScaleIp,sourceLoc,destLoc,binTypeChar))
+        # conn.commit()
+        # conn.close()   
 
     def SubmitCondition(self, emptyWeight,ScanCode,Condition,binType,scaleIp):
         if binType == '1':
