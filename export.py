@@ -12,9 +12,10 @@ conn.autocommit = False
 cursor = conn.cursor()
 
 sqlitecursor.execute('SELECT * FROM wipfl')
-for stuff in sqlitecursor:
-    cursor.execute("EXEC dbo.ABW_WIP_BinInsert @EmpID = {}, @FilledBinWeight = [{}], @PartNum = [{}], @ScanCode0 = [{}], @ScanCode1 = [{}], @ScanCode2 = [{}], @ScaleIp = [{}], @SourceLocation = [{}], @DestinationLocation = [{}], @BinType = [{}] ".format(stuff[0],stuff[1],stuff[2],stuff[3],stuff[4],stuff[5],stuff[6],stuff[7],stuff[8],stuff[9]))
-
+for row in sqlitecursor:
+    cursor.execute("EXEC dbo.ABW_WIP_BinInsert @EmpID = {}, @FilledBinWeight = [{}], @PartNum = [{}], @ScanCode0 = [{}], @ScanCode1 = [{}], @ScanCode2 = [{}], @ScaleIp = [{}], @SourceLocation = [{}], @DestinationLocation = [{}], @BinType = [{}] ".format(row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9]))
+    sqlitecursor.execute("DELETE FROM tasks WHERE id=?", row.id)
+    sqlitecursor.commit()
 
 conn.commit()
 conn.close()   
