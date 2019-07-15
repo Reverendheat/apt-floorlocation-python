@@ -1,5 +1,6 @@
 import pyodbc
 import sqlite3
+import datetime
 from dotenv import load_dotenv
 load_dotenv()
 import os
@@ -83,8 +84,10 @@ class SQLServerFunctions:
             binTypeChar = 'pl'
         if typeOfBin == '4':
             binTypeChar = 'gl'
+        theTime = '{0:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
+        theTime.replace("'",'')
         #Connect to local SQLITE DB and store values
-        cursor.execute('INSERT INTO wipfl(empID, FilledBinWeight, WipNum, ScanCode0, ScanCode1, ScanCode2, ScaleIp, sourceLoc, destLoc, typeOfBin) VALUES(?,?,?,?,?,?,?,?,?,?)',(EmpId, FilledBinWeight, WipNum, ScanCode0, ScanCode1, ScanCode2,ScaleIp,sourceLoc,destLoc,typeOfBin))
+        cursor.execute('INSERT INTO wipfl(empID, FilledBinWeight, WipNum, ScanCode0, ScanCode1, ScanCode2, ScaleIp, sourceLoc, destLoc, typeOfBin, timeEntered) VALUES(?,?,?,?,?,?,?,?,?,?,?)',(EmpId, FilledBinWeight, WipNum, ScanCode0, ScanCode1, ScanCode2,ScaleIp,sourceLoc,destLoc,typeOfBin,theTime))
         db.commit()
         #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
         

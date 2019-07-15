@@ -13,7 +13,7 @@ cursor = conn.cursor()
 
 sqlitecursor.execute('SELECT rowid, * FROM wipfl')
 for row in sqlitecursor:
-    cursor.execute("EXEC dbo.ABW_WIP_BinInsert @EmpID = {}, @FilledBinWeight = [{}], @PartNum = [{}], @ScanCode0 = [{}], @ScanCode1 = [{}], @ScanCode2 = [{}], @ScaleIp = [{}], @SourceLocation = [{}], @DestinationLocation = [{}], @BinType = [{}] ".format(row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[0],row[10]))
+    cursor.execute("EXEC dbo.ABW_WIP_BinInsert @EmpID = {}, @FilledBinWeight = [{}], @PartNum = [{}], @ScanCode0 = [{}], @ScanCode1 = [{}], @ScanCode2 = [{}], @ScaleIp = [{}], @SourceLocation = [{}], @DestinationLocation = [{}], @BinType = [{}], @timeEntered = [{}] ".format(row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11]))
     sqlitecursor.execute('DELETE FROM wipfl WHERE rowid={}'.format(row[0]))
 
 db.commit()
