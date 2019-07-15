@@ -21,7 +21,7 @@ columnInfo = cursor.fetchall()
 if  len(columnInfo) == 0:
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS wipfl (
-        empID TEXT, FilledBinWeight TEXT, WipNum TEXT, ScanCode0 TEXT, ScanCode1 TEXT, ScanCode2 TEXT, ScaleIp TEXT, sourceLoc TEXT, destLoc TEXT, typeOfBin TEXT)
+        empID TEXT, FilledBinWeight TEXT, WipNum TEXT, ScanCode0 TEXT, ScanCode1 TEXT, ScanCode2 TEXT, ScaleIp TEXT, sourceLoc TEXT, destLoc TEXT, typeOfBin TEXT, timeEntered TEXT)
     ''')
     print(Fore.YELLOW + Style.BRIGHT + "DB - Added wipfl table")
 else:

@@ -118,6 +118,10 @@ def main():
         emptyWeight = Weight
         SqlFunctions = SQLServerFunctions()
         Condition = 'acceptable'
+        EmpId = 'empty'
+        WipNum = 'EMPTY-000-00'
+        BlankScanCode = 'NA'
+        DestLoc = 'EMPTY'
         if scaleIp == '':
                 scaleIp = '-'
         if binType not in ['1','2','3','4']:
@@ -127,7 +131,8 @@ def main():
         elif ((len(emptyWeight)) < 5) or ((len(emptyWeight)) > 7): 
             ResetWeight()
         else:
-            SqlFunctions.SubmitCondition(emptyWeight,ScanCode,Condition,binType,scaleIp)
+            SqlFunctions.SubmitWipBin(EmpId,emptyWeight,WipNum,ScanCode,BlankScanCode,BlankScanCode,scaleIp,Condition,DestLoc,binType)
+            #SqlFunctions.SubmitCondition(emptyWeight,ScanCode,Condition,binType,scaleIp)
             ResetWeight()
             for i in [10,5,8,3]:
                 ResetCode(i)
@@ -144,6 +149,10 @@ def main():
         emptyWeight = Weight 
         SqlFunctions = SQLServerFunctions()
         Condition = 'damaged'
+        EmpId = 'empty'
+        WipNum = 'EMPTY-000-00'
+        BlankScanCode = 'NA'
+        DestLoc = 'EMPTY'
         if scaleIp == '':
                 scaleIp = '-'
         if binType not in ['1','2','3','4']:
@@ -153,7 +162,8 @@ def main():
         elif ((len(Weight)) < 5) or ((len(Weight)) > 7):
             ResetWeight()
         else:
-            SqlFunctions.SubmitDamaged(emptyWeight,ScanCode,Condition,binType,scaleIp)
+            SqlFunctions.SubmitWipBin(EmpId,emptyWeight,WipNum,ScanCode,BlankScanCode,BlankScanCode,scaleIp,Condition,DestLoc,binType)
+            #SqlFunctions.SubmitDamaged(emptyWeight,ScanCode,Condition,binType,scaleIp)
             ResetWeight()
             for i in [10,5,8,3]:
                 ResetCode(i)
