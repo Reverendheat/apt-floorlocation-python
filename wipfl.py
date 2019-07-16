@@ -17,6 +17,8 @@ class MyBox(urwid.ListBox):
             key = 'down'
         if key == 'f8':
             raise urwid.ExitMainLoop()
+        if key == '|':
+            raise urwid.ExitMainLoop()
         super().keypress(size, key) 
 
 global Weight

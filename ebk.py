@@ -17,6 +17,8 @@ class MyBox(urwid.ListBox):
             key = 'down'
         if key == 'f8':
             raise urwid.ExitMainLoop()
+        if key == '|':
+            raise urwid.ExitMainLoop()
         super().keypress(size, key) 
    
 global ScanCode
@@ -124,7 +126,7 @@ def main():
         DestLoc = 'EMPTY'
         if scaleIp == '':
                 scaleIp = '-'
-        if binType not in ['1','2','3','4']:
+        if typeOfBin not in ['1','2','3','4']:
             ResetCode(5)
         elif (len(ScanCode) != 5):
             ResetCode(3)
@@ -155,7 +157,7 @@ def main():
         DestLoc = 'EMPTY'
         if scaleIp == '':
                 scaleIp = '-'
-        if binType not in ['1','2','3','4']:
+        if typeOfBin not in ['1','2','3','4']:
             ResetCode(5)
         elif (len(ScanCode) != 5):
             ResetCode(3)
@@ -182,7 +184,7 @@ def main():
             'editbx','editfc' ), left=10, width=20),
         blank,#4
 
-        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditBinType, BinType), #5 bintype
+        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditBinType, typeOfBin), #5 bintype
             'editbx','editfc' ), left=10, width=20),
         
         urwid.Padding(urwid.Text(text_bintypes), left=2, right=2, min_width=20), #6 bin types description
