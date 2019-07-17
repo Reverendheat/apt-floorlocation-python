@@ -76,7 +76,7 @@ def main():
         SqlFunctions = SQLServerFunctions()
         EmpId = 'hil'
         FilledBinWeight = '-'
-        WipNum = 'USE-HISTORICAL'
+        WipNum = 'USE-HISTORIC'
         ScanCode0 = CollectCode(3) 
         ScanCode1 = CollectCode(4)
         ScanCode2 = CollectCode(5)
