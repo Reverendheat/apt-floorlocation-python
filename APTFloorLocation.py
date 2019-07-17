@@ -123,7 +123,7 @@ def mainFunction():
         destinationLocation = ""
         print(Fore.YELLOW + Style.BRIGHT + "You just cleared the current session")
         mainFunction()
-    elif (WEIGHBIN in mainInput):
+    elif (weighBin in mainInput):
         ebk.main()
         os.system('clear')
         mainFunction()
