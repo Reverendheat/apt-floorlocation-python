@@ -29,15 +29,12 @@ global ScanCode1
 ScanCode1 = ''
 global ScanCode2
 ScanCode2 = ''
-global WipNum
-WipNum = ''
+
 global ScaleCode
 ScaleCode = ''
 global Cleared
 Cleared = ""
 
-global BinType
-BinType = ''
 global SourceLocation
 SourceLocation = ''
 global DestinationLocation
@@ -63,8 +60,7 @@ def main():
             except:
                 return('SktRecErr!')
         except:
-            #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            #return('800.01')
+
             return('SktCnctErr!')
          
     def CollectCode(bincodeindex):
@@ -81,7 +77,7 @@ def main():
         am.set_edit_text(Cleared) 
 
     def ResetWeight(text): 
-        listbox.set_focus(14) #index
+        listbox.set_focus(9) #index
         _, boxText = listbox.get_focus()
         am = listbox_content[boxText].original_widget 
         am.set_edit_text(text)
@@ -90,10 +86,7 @@ def main():
         
 
 
-    text_header = (u"WIP - Bulk Line to Inventory Move. / for UP  + for DOWN.") #adjust this per keypad
-    #text_intro = [(
-    #    u"Part MUST be the same if "
-    #    u"moving multiple bins.")]  
+    text_header = (u"WIP Assembly Partial Consumption to Inventory Row/Location Move.") 
 
     textEditSourceLocation = ('editcp', u"Origination Row/Location: ")
     textEditDestinationLocation = ('editcp', u"Destination Row/Location: ")
@@ -102,24 +95,19 @@ def main():
     textEditWipNum = ('editcp', u"Inventory Part Num: ")
     textEditBinCode1 = ('editcp', u"Bin Code 2: ")
     textEditBinCode2 = ('editcp', u"Bin Code 3: ")
-    text_bintypes = [(
-        u" 1 = Flat Bin | 2 = Wheel Bin |"
-        u" 3 = Plastic Bin | 4 = Gaylord")]
+
     textEditBinType = ('editcp', u"Bin Type: ")
     textEditScaleCode = ('editcp', u"QR Scale Code: ")
     textEditWeight = ('editcp', u"Total Bin Weight: ")  
     text_enterDash = [u""]
     text_WeightButton = [u"Update Weight"]
     text_ExitButton = [u"   Exit Application"]
-    #Weight = "Scan Scale Code"
     def WeightButton_press(button):
-        ScaleCode = CollectCode(12) #index
+        ScaleCode = CollectCode(7) #index
         frame.footer = urwid.AttrWrap(urwid.Text(
             [u"Pressed: ", button.get_label()]), 'button')
-        listbox.set_focus(14) #index
+        listbox.set_focus(9) #index
         global Weight
-        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        #Weight = '800.01'
         Weight = CollectWeight(ScaleCode) 
         _, boxText = listbox.get_focus() 
         am = listbox_content[boxText].original_widget 
@@ -135,30 +123,23 @@ def main():
             [u"Pressed: ", button.get_label()]), 'header')
         SqlFunctions = SQLServerFunctions()
         EmpId = 'xxxx'
-        typeOfBin = CollectCode(9)
-        WipNum = CollectCode(3)
-        ScaleIp = CollectCode(12)
-        ScanCode0 = CollectCode(5) 
-        ScanCode1 = CollectCode(6)
-        ScanCode2 = CollectCode(7)
-        
+        ScaleIp = CollectCode(7)
+        ScanCode0 = CollectCode(3) 
+        ScanCode1 = CollectCode(4)
+        ScanCode2 = CollectCode(5)
         sourceLoc = CollectCode(1)[1:] #removes leading *
-        destLoc = CollectCode(18)[1:] 
+        destLoc = CollectCode(13)[1:] 
+        WipNum = 'USE-HISTORIC'
+        typeOfBin = '-'
         if (len(sourceLoc) < 2):  #sql lookups will break if passing in blank values, so validate these parameter's lengths first
             ResetCode(1)
         elif(len(destLoc) < 2 ):
-                ResetCode(18) 
-        elif (len(WipNum) != 12):
-                ResetCode(3)
-         
-        else:
-            # isPartValid = SqlFunctions.PartExistsTest(WipNum) 
-            # isSourceLocationValid = SqlFunctions.LocationExistsTest(sourceLoc)
-            # isDestinationLocationValid = SqlFunctions.LocationExistsTest(destLoc)
-            
+                ResetCode(13) 
+       
+        else:            
             global Weight
             FilledBinWeight = Weight      
-            manualEntry = CollectCode(14)
+            manualEntry = CollectCode(9)
             if ScaleIp == '':
                 ScaleIp = '-'
             if FilledBinWeight == '' or (len(manualEntry) > 0):
@@ -168,31 +149,23 @@ def main():
             if (ScanCode2 == ''):
                 ScanCode2 = 'NA'
             if ScanCode0 == ScanCode1:
-                ResetCode(6)
-            elif typeOfBin not in ['1','2','3','4']:
-                ResetCode(9)
+                ResetCode(4)
             elif ScanCode1 == ScanCode2 and ScanCode1 != 'NA':
-                ResetCode(5)
+                ResetCode(3)
             elif (len(ScanCode0) != 5): #must be at least one bin
-                ResetCode(5)
+                ResetCode(3)
             elif (len(ScanCode1) != 5) and ((ScanCode1) != 'NA'): 
-                ResetCode(6)  
+                ResetCode(4)  
             elif (len(ScanCode2) != 5) and ((ScanCode2) != 'NA'):
-                ResetCode(7)
+                ResetCode(5)
             elif ScanCode0 == ScanCode2:
                 ResetCode(5)
-            # elif isPartValid == False:
-            #     ResetCode(3)
-            # elif isSourceLocationValid == False:
-            #     ResetCode(1)
-            # elif isDestinationLocationValid == False:
-            #     ResetCode(18)
             elif ((len(FilledBinWeight)) < 1) or FilledBinWeight == '' or FilledBinWeight == 'SktCnctErr!' or FilledBinWeight == 'SktRecErr!' or ((len(FilledBinWeight)) > 7): 
-                ResetCode(14)
+                ResetCode(9)
             else:
                 SqlFunctions.SubmitWipBin(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2,ScaleIp,sourceLoc,destLoc,typeOfBin)               
                 #clear weight,Scancode, WIP #
-                for i in [18,3,5,6,7,9,12,14,1]:
+                for i in [13,9,7,5,4,3,1]:
                     ResetCode(i)
                 FilledBinWeight = ''
                 Weight = ''
@@ -205,43 +178,34 @@ def main():
     blank = urwid.Divider()
     listbox_content = [
         blank, #[0]
-        #urwid.Padding(urwid.Text(text_intro), left=2, right=2, min_width=20), #[]
-        #blank, #[] 
         urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditSourceLocation, SourceLocation), # [1] SourceLocation
             'editbx','editfc' ), left=1, width=40),
         blank, #[2]
-        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditWipNum, WipNum), # [3] wipnum
-            'editbx','editfc' ), left=7, width=34),
-        blank, #[4]
-        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditBinCode, ScanCode0), # [5] bincode0
+        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditBinCode, ScanCode0), # [3] bincode0
             'editbx','editfc' ), left=15, width=26),
-        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditBinCode1, ScanCode1), # [6] bincode1
+        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditBinCode1, ScanCode1), # [4] bincode1
             'editbx','editfc' ), left=15, width=26),
-        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditBinCode2, ScanCode2), #[7] bincode2
+        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditBinCode2, ScanCode2), #[5] bincode2
             'editbx','editfc' ), left=15, width=26),
-        blank, #[8]
-        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditBinType, BinType), # [9]bintype
-            'editbx','editfc' ), left=17, width=24),
-        urwid.Padding(urwid.Text(text_bintypes), left=2, right=2, min_width=20), # [10]bin types description
-        blank, #[11]
-        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditScaleCode, ScaleCode), #[12] ScaleCode
+        blank, #[6]
+        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditScaleCode, ScaleCode), #[7] ScaleCode
             'editbx','editfc' ), left=12, width=29),
-        blank, #[13]
-        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditWeight, Weight), # [14] weight
+        blank, #[8]
+        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditWeight, Weight), # [9] weight
             'editbx','editfc' ), left=9, width=32),
-        urwid.Padding(urwid.Text(text_enterDash), left=2, right=2, min_width=20), #[15] enter dash text line
+        urwid.Padding(urwid.Text(text_enterDash), left=2, right=2, min_width=20), #[10] enter dash text line
         urwid.Padding(urwid.GridFlow(
             [urwid.AttrWrap(urwid.Button(txt, WeightButton_press),
                 'buttn','buttnf') for txt in text_WeightButton],
             10, 3, 1, 'left'),
-            left=29, right=3, min_width=13), #[16] weight button 
-        blank, #[17]
-        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditDestinationLocation, DestinationLocation), # [18] DestinationLocation
+            left=29, right=3, min_width=13), #[11] weight button 
+        blank, #[12]
+        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditDestinationLocation, DestinationLocation), # [13] DestinationLocation
                     'editbx','editfc' ), left=1, width=40),      
-        urwid.AttrWrap(urwid.Divider("=", 1), 'bright'), #[19]
-        urwid.Padding(urwid.Text(text_divider), left=20, right=2, min_width=20), #[20]
-        urwid.AttrWrap(urwid.Divider("-", 0, 1), 'bright'), #[21]
-        urwid.Padding(urwid.GridFlow(                           #22 submit button
+        urwid.AttrWrap(urwid.Divider("=", 1), 'bright'), #[14]
+        urwid.Padding(urwid.Text(text_divider), left=20, right=2, min_width=20), #[15]
+        urwid.AttrWrap(urwid.Divider("-", 0, 1), 'bright'), #[16]
+        urwid.Padding(urwid.GridFlow(                           #17 submit button
             [urwid.AttrWrap(urwid.Button(txt, submit_button_press),
                 'buttn','buttnf') for txt in submit_text_button_list],
             15, 3, 1, 'left'),
