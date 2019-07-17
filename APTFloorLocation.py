@@ -4,7 +4,8 @@ import datetime
 import os
 import wipfl
 import ebk
-import weighlater
+import WIPPartialConsumption
+import WIPInvRowOrLocTransfer
 from colorama import init
 from colorama import Fore, Back, Style
 init()
@@ -60,9 +61,10 @@ removeSource = "REMOVESOURCE"
 removeLastLine = "REMOVELAST"
 clearInput = "CLEARINPUT"
 startOver = "STARTOVER"
-weighBIN = "WEIGHBIN"
+ebk = "EMPTYBIN"
 wipFL = "WIPFL"
-weighLater = "WEIGHLATER"
+PartialCon = "PARTIALCON"
+RowLocTransFer = "ROWLOCTRANSFER"
 
 #Main loop
 print(Fore.GREEN + title + Style.RESET_ALL)
@@ -121,7 +123,7 @@ def mainFunction():
         destinationLocation = ""
         print(Fore.YELLOW + Style.BRIGHT + "You just cleared the current session")
         mainFunction()
-    elif (weighBIN in mainInput):
+    elif (ebk in mainInput):
         ebk.main()
         os.system('clear')
         mainFunction()
@@ -129,8 +131,12 @@ def mainFunction():
         wipfl.main()
         os.system('clear')
         mainFunction()
-    elif (weighLater in mainInput):
-        weighlater.main()
+    elif (PartialCon in mainInput):
+        WIPPartialConsumption.main()
+        os.system('clear')
+        mainFunction()
+    elif (RowLocTransFer in mainInput):
+        WIPInvRowOrLocTransfer.main()
         os.system('clear')
         mainFunction()
     elif not any(word in mainInput for word in locationWords):

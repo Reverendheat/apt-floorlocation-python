@@ -109,7 +109,7 @@ def main():
     
     text_divider =  [u"Select bin condition to submit entry."]
 
-    acceptable_text_button_list = [u"Acceptable"]
+    acceptable_text_button_list = [u"SUBMIT"]
     def acceptable_button_press(button):
         frame.footer = urwid.AttrWrap(urwid.Text(
             [u"Pressed: ", button.get_label()]), 'header')
@@ -140,37 +140,8 @@ def main():
                 ResetCode(i)
             Condition = ''
             Weight = ''
-    damaged_text_button_list = [u"Damaged"]
-    def damaged_button_press(button):
-        frame.footer = urwid.AttrWrap(urwid.Text(
-            [u"Pressed: ", button.get_label()]), 'header')
-        ScanCode = CollectCode(3) 
-        typeOfBin = CollectCode(5)
-        scaleIp = CollectCode(8)
-        global Weight
-        emptyWeight = Weight 
-        SqlFunctions = SQLServerFunctions()
-        Condition = 'damaged'
-        EmpId = 'empty'
-        WipNum = 'EMPTY-000-00'
-        BlankScanCode = 'NA'
-        DestLoc = 'EMPTY'
-        if scaleIp == '':
-                scaleIp = '-'
-        if typeOfBin not in ['1','2','3','4']:
-            ResetCode(5)
-        elif (len(ScanCode) != 5):
-            ResetCode(3)
-        elif ((len(Weight)) < 5) or ((len(Weight)) > 7):
-            ResetWeight()
-        else:
-            SqlFunctions.SubmitWipBin(EmpId,emptyWeight,WipNum,ScanCode,BlankScanCode,BlankScanCode,scaleIp,Condition,DestLoc,typeOfBin)
-            #SqlFunctions.SubmitDamaged(emptyWeight,ScanCode,Condition,binType,scaleIp)
-            ResetWeight()
-            for i in [10,5,8,3]:
-                ResetCode(i)
-            Condition= ''
-            Weight = ''
+   
+
     
     def ExitButton_Press(button):
         raise urwid.ExitMainLoop()
@@ -210,11 +181,6 @@ def main():
                 'buttn','buttnf') for txt in acceptable_text_button_list],
             15, 3, 1, 'left'),
             left=15, right=3, min_width=13),
-        urwid.Padding(urwid.GridFlow(
-            [urwid.AttrWrap(urwid.Button(txt, damaged_button_press),
-                'buttn','buttnf') for txt in damaged_text_button_list],
-            13, 3, 1, 'left'),
-            left=15, right=3, min_width=13),
         blank,
         urwid.Padding(urwid.GridFlow(
             [urwid.AttrWrap(urwid.Button(txt, ExitButton_Press),
@@ -234,7 +200,7 @@ def main():
         ('header','white','dark red', 'bold'),
         ('important','dark blue','light gray',('standout','underline')),
         ('editfc','white', 'dark blue', 'bold'),
-        ('editbx','light gray', 'dark blue'),
+        ('editbx','light gray', 'dark blue','bold'),
         ('editcp','black','light gray', 'standout'),
         ('bright','dark gray','light gray', ('bold','standout')),
         ('buttn','black','dark cyan'),
