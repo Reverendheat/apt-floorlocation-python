@@ -84,6 +84,8 @@ class SQLServerFunctions:
             binTypeChar = 'pl'
         if typeOfBin == '4':
             binTypeChar = 'gl'
+        if typeOfBin == '-':
+            binTypeChar = '-'
         theTime = '{0:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
         theTime.replace("'",'')
         #Connect to local SQLITE DB and store values
