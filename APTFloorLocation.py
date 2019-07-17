@@ -4,7 +4,8 @@ import datetime
 import os
 import wipfl
 import ebk
-import weighlater
+import WIPPartialConsumption
+import WIPInvRowOrLocTransfer
 from colorama import init
 from colorama import Fore, Back, Style
 init()
@@ -62,7 +63,8 @@ clearInput = "CLEARINPUT"
 startOver = "STARTOVER"
 weighBIN = "WEIGHBIN"
 wipFL = "WIPFL"
-weighLater = "WEIGHLATER"
+PartialCon = "PARTIALCON"
+RowLocTransFer = "ROWLOCTRANSFER"
 
 #Main loop
 print(Fore.GREEN + title + Style.RESET_ALL)
@@ -129,8 +131,12 @@ def mainFunction():
         wipfl.main()
         os.system('clear')
         mainFunction()
-    elif (weighLater in mainInput):
-        weighlater.main()
+    elif (PartialCon in mainInput):
+        WIPPartialConsumption.main()
+        os.system('clear')
+        mainFunction()
+    elif (RowLocTransFer in mainInput):
+        WIPInvRowOrLocTransfer.main()
         os.system('clear')
         mainFunction()
     elif not any(word in mainInput for word in locationWords):
