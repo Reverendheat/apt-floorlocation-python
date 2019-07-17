@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 import os
 
-db = sqlite3.connect('floorlocation.db')
+db = sqlite3.connect('/home/pi/floorlocation.db')
 sqlitecursor = db.cursor()
 
 conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))  
