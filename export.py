@@ -7,7 +7,8 @@ import os
 db = sqlite3.connect('/home/pi/floorlocation.db')
 sqlitecursor = db.cursor()
 
-conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))  
+#conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))  
+conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=AA734248pass;TDS_Version=7.4')
 conn.autocommit = False
 cursor = conn.cursor()
 
