@@ -61,7 +61,7 @@ removeSource = "REMOVESOURCE"
 removeLastLine = "REMOVELAST"
 clearInput = "CLEARINPUT"
 startOver = "STARTOVER"
-weighBIN = "WEIGHBIN"
+ebk = "EMPTYBIN"
 wipFL = "WIPFL"
 PartialCon = "PARTIALCON"
 RowLocTransFer = "ROWLOCTRANSFER"
@@ -123,7 +123,7 @@ def mainFunction():
         destinationLocation = ""
         print(Fore.YELLOW + Style.BRIGHT + "You just cleared the current session")
         mainFunction()
-    elif (weighBIN in mainInput):
+    elif (ebk in mainInput):
         ebk.main()
         os.system('clear')
         mainFunction()
