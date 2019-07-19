@@ -185,21 +185,11 @@ def main():
             15, 3, 1, 'left'),
             left=15, right=3, min_width=13),
         blank,
-        blank,
-        blank,
-        blank,
-        blank,
-        blank,
-        blank,
-        blank,
-        blank,
-        blank,
-        blank,
-        urwid.Padding(urwid.GridFlow(
-            [urwid.AttrWrap(urwid.Button(txt, ExitButton_Press),
-                'buttn','buttnf') for txt in text_ExitButton],
-            15, 3, 1, 'left'),
-            left=15, right=3, min_width=20), 
+        # urwid.Padding(urwid.GridFlow(
+        #     [urwid.AttrWrap(urwid.Button(txt, ExitButton_Press),
+        #         'buttn','buttnf') for txt in text_ExitButton],
+        #     15, 3, 1, 'left'),
+        #     left=15, right=3, min_width=20), 
 
         ]
 
