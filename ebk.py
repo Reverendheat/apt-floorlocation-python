@@ -133,7 +133,7 @@ def main():
             ResetCode(5)
         elif (len(ScanCode) != 5):
             ResetCode(3)
-        #elif ((len(emptyWeight)) < 5) or ((len(emptyWeight)) > 7): 
+        #elif ((len(emptyWeight)) < 2) or ((len(emptyWeight)) > 7): 
         #    ResetWeight()
         else:
             SqlFunctions.SubmitWipBin(EmpId,emptyWeight,WipNum,ScanCode,BlankScanCode,BlankScanCode,scaleIp,Condition,DestLoc,typeOfBin)
@@ -184,6 +184,16 @@ def main():
                 'buttn','buttnf') for txt in acceptable_text_button_list],
             15, 3, 1, 'left'),
             left=15, right=3, min_width=13),
+        blank,
+        blank,
+        blank,
+        blank,
+        blank,
+        blank,
+        blank,
+        blank,
+        blank,
+        blank,
         blank,
         urwid.Padding(urwid.GridFlow(
             [urwid.AttrWrap(urwid.Button(txt, ExitButton_Press),
