@@ -84,7 +84,7 @@ def mainFunction():
             cartNumber = 0
             mainFunction()
         finally:
-            if (cartNumber < 10) or (cartNumber > 99):
+            if (len(str(cartNumber)) > 2):
                 print(Fore.RED + Style.BRIGHT + "Cart numbers must be two digits...")
                 cartNumber = 0
                 mainFunction()
