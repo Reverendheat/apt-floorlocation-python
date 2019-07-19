@@ -15,6 +15,9 @@ class MyBox(urwid.ListBox):
             key = 'up'
         if key == '+':
             key = 'down'
+        if key == 'enter':
+            if 'editbx' in str(self.get_focus_widgets()[0]):
+                key = 'down'        
         if key == 'f8':
             raise urwid.ExitMainLoop()
         if key == '|':
