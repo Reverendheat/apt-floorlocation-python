@@ -133,8 +133,8 @@ def main():
             ResetCode(5)
         elif (len(ScanCode) != 5):
             ResetCode(3)
-        elif ((len(emptyWeight)) < 5) or ((len(emptyWeight)) > 7): 
-            ResetWeight()
+        #elif ((len(emptyWeight)) < 5) or ((len(emptyWeight)) > 7): 
+        #    ResetWeight()
         else:
             SqlFunctions.SubmitWipBin(EmpId,emptyWeight,WipNum,ScanCode,BlankScanCode,BlankScanCode,scaleIp,Condition,DestLoc,typeOfBin)
             #SqlFunctions.SubmitCondition(emptyWeight,ScanCode,Condition,binType,scaleIp)
