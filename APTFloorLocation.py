@@ -146,7 +146,7 @@ def mainFunction():
         if (binInput.isdigit()):
             if (len(binInput) == 5):
                 #Lets look up the the number of binInput and see if its in the CSV downloaded from NEWMAS
-                with open("BinDataQty_withdesc.csv") as csv_file:
+                with open("BinDataQty.csv") as csv_file:
                     #Check every row in the CSV for the bin number in the BINNUMBER column
                     for row in csv.reader(csv_file, delimiter=','):
                         if (binInput in row[0]):
