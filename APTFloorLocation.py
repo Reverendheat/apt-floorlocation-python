@@ -150,7 +150,7 @@ def mainFunction():
                     #Check every row in the CSV for the bin number in the BINNUMBER column
                     for row in csv.reader(csv_file, delimiter=','):
                         if (binInput in row[0]):
-                            print (Fore.GREEN + Style.BRIGHT + "Item Number: " + row[1] +" | " + "Description: " + row[2] + " | " + "Current Location: " + row[6] + " | " + "Last move: " + row[4] + " | " + "Last catalog update: " + str(time.ctime(os.path.getmtime('/home/pi/aptfloorlocation/BinDataQty.csv'))) + Style.RESET_ALL)
+                            print (Fore.GREEN + Style.BRIGHT + "Item Number: " + row[1] +" | " + "Description: " + row[2] + " | " + "Current Location: " + row[6] + " | " + "Last move: " + row[4] + " | " + "Last catalog update: " + str(time.ctime(os.path.getmtime('/home/pi/aptfloorlocationpython/BinDataQty.csv'))) + Style.RESET_ALL)
                             mainFunction()
                     print(Fore.RED + Style.BRIGHT + "Bin not in catalog, you may need to update the catalog by scanning UPDATECATALOG code" + Style.RESET_ALL)
                     mainFunction()
