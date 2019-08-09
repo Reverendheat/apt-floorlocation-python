@@ -146,14 +146,17 @@ def mainFunction():
         if (binInput.isdigit()):
             if (len(binInput) == 5):
                 #Lets look up the the number of binInput and see if its in the CSV downloaded from NEWMAS
-                with open("BinDataQty.csv") as csv_file:
-                    #Check every row in the CSV for the bin number in the BINNUMBER column
-                    for row in csv.reader(csv_file, delimiter=','):
-                        if (binInput in row[0]):
-                            print (Fore.GREEN + Style.BRIGHT + "Item Number: " + row[1] +" | " + "Description: " + row[2] + " | " + "Current Location: " + row[6] + " | " + "Last move: " + row[4] + " | " + "Last catalog update: " + str(time.ctime(os.path.getmtime('/home/pi/aptfloorlocationpython/BinDataQty.csv'))) + Style.RESET_ALL)
-                            mainFunction()
-                    print(Fore.RED + Style.BRIGHT + "Bin not in catalog, you may need to update the catalog by scanning UPDATECATALOG code" + Style.RESET_ALL)
-                    mainFunction()
+                try:
+                    with open("/home/pi/aptfloorlocationpython/BinDataQty.csv") as csv_file:
+                        #Check every row in the CSV for the bin number in the BINNUMBER column
+                        for row in csv.reader(csv_file, delimiter=','):
+                            if (binInput in row[0]):
+                                print (Fore.GREEN + Style.BRIGHT + "Item Number: " + row[1] +" | " + "Description: " + row[2] + " | " + "Current Location: " + row[6] + " | " + "Last move: " + row[4] + " | " + "Last catalog update: " + str(time.ctime(os.path.getmtime('/home/pi/aptfloorlocationpython/BinDataQty.csv'))) + Style.RESET_ALL)
+                                mainFunction()
+                        print(Fore.RED + Style.BRIGHT + "Bin not in catalog, you may need to update the catalog by scanning UPDATECATALOG code" + Style.RESET_ALL)
+                        mainFunction()
+                except IOError:
+                    print(Fore.RED + Style.BRIGHT + "Bin catalog has not been downloaded yet, this happenes every 10 minutes while on wireless!" + Style.RESET_ALL)
             else:
                 print(Fore.RED + Style.BRIGHT + "BIN Number must be five digits!" + Style.RESET_ALL)
                 mainFunction()
