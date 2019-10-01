@@ -202,6 +202,7 @@ def main():
                     ResetCode(i)
                 FilledBinWeight = ''
                 Weight = ''
+                textWeight.set_text('0.0')
     
     def ExitButton_Press(button):
         raise urwid.ExitMainLoop()

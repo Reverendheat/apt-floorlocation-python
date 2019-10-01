@@ -101,7 +101,8 @@ def main():
 
     textEditBinType = ('editcp', u"Bin Type: ")
     textEditScaleCode = ('editcp', u"QR Scale Code: ")
-    textEditWeight = ('editcp', u"Total Bin Weight: ")  
+    #textEditWeight = ('editcp', u"Total Bin Weight: ")  
+    textWeight = urwid.Text(u"Weight")
     text_enterDash = [u""]
     text_WeightButton = [u"Update Weight"]
     text_ExitButton = [u"   Exit Application"]
@@ -114,7 +115,8 @@ def main():
         Weight = CollectWeight(ScaleCode) 
         _, boxText = listbox.get_focus() 
         am = listbox_content[boxText].original_widget 
-        am.set_edit_text(Weight)
+        #am.set_edit_text(Weight)
+        textWeight.set_text(Weight)
 
     
     
@@ -142,7 +144,7 @@ def main():
         else:            
             global Weight
             FilledBinWeight = Weight      
-            manualEntry = CollectCode(9)
+            manualEntry = textWeight.text
             if ScaleIp == '':
                 ScaleIp = '-'
             if FilledBinWeight == '' or (len(manualEntry) > 0):
@@ -164,14 +166,17 @@ def main():
             elif ScanCode0 == ScanCode2:
                 ResetCode(5)
             elif ((len(FilledBinWeight)) < 1) or FilledBinWeight == '' or FilledBinWeight == 'SktCnctErr!' or FilledBinWeight == 'SktRecErr!' or ((len(FilledBinWeight)) > 7): 
-                ResetCode(9)
+                #ResetCode(9)
+                textWeight.set_text('0.0')
             else:
                 SqlFunctions.SubmitWipBin(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2,ScaleIp,sourceLoc,destLoc,typeOfBin)               
                 #clear weight,Scancode, WIP #
-                for i in [13,9,7,5,4,3,1]:
+                #for i in [13,9,7,5,4,3,1]:
+                for i in [13,7,5,4,3,1]:
                     ResetCode(i)
                 FilledBinWeight = ''
                 Weight = ''
+                textWeight.set_text('0.0')
     
     def ExitButton_Press(button):
         raise urwid.ExitMainLoop()
@@ -194,8 +199,9 @@ def main():
         urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditScaleCode, ScaleCode), #[7] ScaleCode
             'editbx','editfc' ), left=12, width=29),
         blank, #[8]
-        urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditWeight, Weight), # [9] weight
-            'editbx','editfc' ), left=9, width=32),
+        #urwid.Padding(urwid.AttrWrap(urwid.Edit(textEditWeight, Weight), # [9] weight
+        #    'editbx','editfc' ), left=9, width=32),
+        urwid.Padding(textWeight, left=29, right=2, min_width=20), #[9]
         urwid.Padding(urwid.Text(text_enterDash), left=2, right=2, min_width=20), #[10] enter dash text line
         urwid.Padding(urwid.GridFlow(
             [urwid.AttrWrap(urwid.Button(txt, WeightButton_press),
