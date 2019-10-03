@@ -192,8 +192,8 @@ def main():
             #     ResetCode(1)
             # elif isDestinationLocationValid == False:
             #     ResetCode(18)
-            elif ((len(FilledBinWeight)) < 1) or FilledBinWeight == '' or FilledBinWeight == 'SktCnctErr!' or FilledBinWeight == 'SktRecErr!' or ((len(FilledBinWeight)) > 7) or FilledBinWeight == 'Scale Error': 
-                textWeight.set_text('Scale Error')
+            elif FilledBinWeight == '' or FilledBinWeight == 'SktCnctErr!' or FilledBinWeight == 'SktRecErr!' or ((len(FilledBinWeight)) > 7) or FilledBinWeight == 'Weight or Scale Error' or FilledBinWeight == "0.0" or len(FilledBinWeight) < 3: 
+                textWeight.set_text('Weight or Scale Error')
             else:
                 SqlFunctions.SubmitWipBin(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2,ScaleIp,sourceLoc,destLoc,typeOfBin)               
                 #clear weight,Scancode, WIP #
