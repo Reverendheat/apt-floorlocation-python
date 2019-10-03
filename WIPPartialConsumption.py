@@ -165,9 +165,9 @@ def main():
                 ResetCode(5)
             elif ScanCode0 == ScanCode2:
                 ResetCode(5)
-            elif ((len(FilledBinWeight)) < 1) or FilledBinWeight == '' or FilledBinWeight == 'SktCnctErr!' or FilledBinWeight == 'SktRecErr!' or ((len(FilledBinWeight)) > 7): 
+            elif ((len(FilledBinWeight)) < 1) or FilledBinWeight == '' or FilledBinWeight == 'SktCnctErr!' or FilledBinWeight == 'SktRecErr!' or ((len(FilledBinWeight)) > 7) or FilledBinWeight == 'Scale Error': 
                 #ResetCode(9)
-                textWeight.set_text('0.0')
+                textWeight.set_text('Scale Error')
             else:
                 SqlFunctions.SubmitWipBin(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2,ScaleIp,sourceLoc,destLoc,typeOfBin)               
                 #clear weight,Scancode, WIP #
