@@ -18,6 +18,19 @@ db = sqlite3.connect('floorlocation.db')
 cursor = db.cursor()
 
 #Check to see if new column for cartnumbers exist, if not add it, also check if Adams wipFL table exists, if not add it.
+cursor.execute('PRAGMA table_info(empinfo);')
+columnInfo = cursor.fetchall()
+if  len(columnInfo) == 0:
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS empinfo (
+        empID TEXT)
+    ''')
+    print(Fore.YELLOW + Style.BRIGHT + "DB - Added empinfo table")
+else:
+    #Clear out any existing entries
+    cursor.execute("DELETE FROM empinfo;")
+    db.commit()
+    print(Fore.GREEN + Style.BRIGHT + "DB - empinfo table OK and cleared")
 cursor.execute('PRAGMA table_info(wipfl);')
 columnInfo = cursor.fetchall()
 if  len(columnInfo) == 0:
@@ -55,6 +68,7 @@ locationWords = ["*","FLC"]
 binPop = ""
 cartNumber = 0
 dcPre = "*DC"
+empID = 0
 
 #COMMANDS
 removeBin = "REMOVELASTBIN"
@@ -77,6 +91,23 @@ def mainFunction():
     global destinationLocation
     global tempString
     global cartNumber
+    global empID
+    if empID == 0:
+        empIDVal = input(Fore.BLUE + Style.BRIGHT + "Please enter your employee ID number: \n" + Style.RESET_ALL)
+        try:
+            empID = int(empIDVal)
+        except:
+            print(Fore.RED + Style.BRIGHT + "It looks like that is not a number...")
+            empID = 0
+            mainFunction()
+        finally:
+            if (len(str(empID)) < 7 or len(str(empID)) > 8):
+                print(Fore.RED + Style.BRIGHT + "Cart numbers must be between 7 and 8 digits...")
+                empID = 0
+                mainFunction()
+        cursor.execute('INSERT INTO empinfo(empID) VALUES(?)', (str(empID),))
+        db.commit()
+        print(Fore.GREEN + Style.BRIGHT + "Welcome employee " + str(empID) + Style.RESET_ALL)
     if cartNumber == 0:
         cartVal = input(Fore.BLUE + Style.BRIGHT + "Please enter your cart number: \n" + Style.RESET_ALL)
         try:
@@ -151,7 +182,7 @@ def mainFunction():
                         #Check every row in the CSV for the bin number in the BINNUMBER column
                         for row in csv.reader(csv_file, delimiter=','):
                             if (binInput in row[0]):
-                                print (Fore.GREEN + Style.BRIGHT + "Item Number: " + row[1] +" | " + "Description: " + row[2] + " | " + "Current Location: " + row[6] + " | " + "Last move: " + row[4] + " | " + "Last catalog update: " + str(time.ctime(os.path.getmtime('/home/pi/aptfloorlocationpython/BinDataQty.csv'))) + Style.RESET_ALL)
+                                print (Fore.GREEN + Style.BRIGHT + "Item Number: " + row[1] +"\n" + "Description: " + row[2] + "\n" + "Current Location: " + row[6] + "\n" + "Last move: " + row[4] + "\n" + "Last catalog update: " + str(time.ctime(os.path.getmtime('/home/pi/aptfloorlocationpython/BinDataQty.csv'))) + Style.RESET_ALL)
                                 mainFunction()
                         print(Fore.RED + Style.BRIGHT + "Bin not in catalog, you may need to update the catalog by scanning UPDATECATALOG code" + Style.RESET_ALL)
                         mainFunction()

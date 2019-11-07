@@ -76,6 +76,10 @@ class SQLServerFunctions:
     def SubmitWipBin(self, EmpId, FilledBinWeight,WipNum,ScanCode0, ScanCode1, ScanCode2,ScaleIp,sourceLoc,destLoc,typeOfBin):
         db = sqlite3.connect('floorlocation.db')
         cursor = db.cursor()
+        getEMPID = cursor.execute('SELECT * FROM empinfo;')
+        records = cursor.fetchall()
+        for row in records:
+            EmpId = row[0]
         if typeOfBin == '1':
             binTypeChar = 'fl'
         if typeOfBin == '2':
@@ -91,17 +95,6 @@ class SQLServerFunctions:
         #Connect to local SQLITE DB and store values
         cursor.execute('INSERT INTO wipfl(empID, FilledBinWeight, WipNum, ScanCode0, ScanCode1, ScanCode2, ScaleIp, sourceLoc, destLoc, typeOfBin, timeEntered) VALUES(?,?,?,?,?,?,?,?,?,?,?)',(EmpId, FilledBinWeight, WipNum, ScanCode0, ScanCode1, ScanCode2,ScaleIp,sourceLoc,destLoc,binTypeChar,theTime))
         db.commit()
-        #conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=lookincw;TDS_Version=7.4')
-        
-        #until dotenv is fixed leave below line out
-        # conn = pyodbc.connect('DSN=NAME1;UID=sa;PWD=%s;TDS_Version=7.4' % os.getenv("NEWMAS_DB_PASS"))  
-        
-        # conn.autocommit = False
-        # cursor = conn.cursor() 
-        # #@PartNum parameter had to be escaped with [] for hyphens to correctly pass through
-        # cursor.execute("EXEC dbo.ABW_WIP_BinInsert @EmpID = {}, @FilledBinWeight = [{}], @PartNum = [{}], @ScanCode0 = [{}], @ScanCode1 = [{}], @ScanCode2 = [{}], @ScaleIp = [{}], @SourceLocation = [{}], @DestinationLocation = [{}], @BinType = [{}] ".format(EmpId,FilledBinWeight,WipNum,ScanCode0,ScanCode1,ScanCode2,ScaleIp,sourceLoc,destLoc,binTypeChar))
-        # conn.commit()
-        # conn.close()   
 
     def SubmitCondition(self, emptyWeight,ScanCode,Condition,binType,scaleIp):
         if binType == '1':
