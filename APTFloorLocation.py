@@ -1,6 +1,6 @@
 import csv
 import sqlite3
-import datetime 
+import datetime
 import time
 import os
 import wipfl
@@ -17,45 +17,6 @@ from config import settings
 db = sqlite3.connect('floorlocation.db')
 cursor = db.cursor()
 
-#Check to see if new column for cartnumbers exist, if not add it, also check if Adams wipFL table exists, if not add it.
-cursor.execute('PRAGMA table_info(empinfo);')
-columnInfo = cursor.fetchall()
-if  len(columnInfo) == 0:
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS empinfo (
-        empID TEXT)
-    ''')
-    print(Fore.YELLOW + Style.BRIGHT + "DB - Added empinfo table")
-else:
-    #Clear out any existing entries
-    cursor.execute("DELETE FROM empinfo;")
-    db.commit()
-    print(Fore.GREEN + Style.BRIGHT + "DB - empinfo table OK and cleared")
-cursor.execute('PRAGMA table_info(wipfl);')
-columnInfo = cursor.fetchall()
-if  len(columnInfo) == 0:
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS wipfl (
-        empID TEXT, FilledBinWeight TEXT, WipNum TEXT, ScanCode0 TEXT, ScanCode1 TEXT, ScanCode2 TEXT, ScaleIp TEXT, sourceLoc TEXT, destLoc TEXT, typeOfBin TEXT, timeEntered TEXT)
-    ''')
-    print(Fore.YELLOW + Style.BRIGHT + "DB - Added wipfl table")
-else:
-    print(Fore.GREEN + Style.BRIGHT + "DB - wipfl table OK")
-cursor.execute('PRAGMA table_info(moves);')
-columnInfo = cursor.fetchall()
-if  len(columnInfo) == 0:
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS moves (
-        date TEXT, bin1 INTEGER, bin2 INTEGER, bin3 INTEGER, bin4 INTEGER, source TEXT, destination TEXT, cart INTEGER)
-    ''')
-    print(Fore.YELLOW + Style.BRIGHT + "DB - Added moves table")
-else:
-    lastColumn = columnInfo[-1][1]
-    if lastColumn != "cart":
-        cursor.execute('ALTER TABLE moves ADD COLUMN cart INTEGER')
-        print(Fore.YELLOW + Style.BRIGHT + "Added cart column to existing FloorLocation Database")
-    else:
-        print(Fore.GREEN + Style.BRIGHT + "DB - moves table OK")
 
 #Variable declaration
 title = "APT Floor Tracking Version: " + settings['Version']
@@ -81,6 +42,7 @@ wipFL = "WIPFL"
 PartialCon = "PARTIALCON"
 RowLocTransFer = "ROWLOCTRANSFER"
 BinStatus = "BINSTATUS"
+Logout = "LOGOUT"
 
 #Main loop
 print(Fore.GREEN + title + Style.RESET_ALL)
@@ -102,7 +64,7 @@ def mainFunction():
             mainFunction()
         finally:
             if (len(str(empID)) < 7 or len(str(empID)) > 8):
-                print(Fore.RED + Style.BRIGHT + "Cart numbers must be between 7 and 8 digits...")
+                print(Fore.RED + Style.BRIGHT + "Employee numbers must be between 7 and 8 digits...")
                 empID = 0
                 mainFunction()
         cursor.execute('INSERT INTO empinfo(empID) VALUES(?)', (str(empID),))
@@ -126,6 +88,9 @@ def mainFunction():
         mainInput = input(Fore.BLUE + Style.BRIGHT + "Please scan the source floor location or your bins: \n" + Style.RESET_ALL)
     else:
         mainInput = input(Fore.BLUE + Style.BRIGHT + "Please scan the destination floor location or your bins: \n" + Style.RESET_ALL)
+    if (Logout in mainInput):
+        print(Fore.YELLOW + Style.BRIGHT + "Logging out")
+        logOut()
     if (removeBin in mainInput):
         if (bins):
             bins.pop()
@@ -335,20 +300,68 @@ def removeLastLineSQL():
     print(Fore.YELLOW + Style.BRIGHT + "Removing " + result + Style.RESET_ALL)
     cursor.execute('DELETE FROM moves WHERE rowid = (SELECT MAX(rowid) FROM moves);')
     db.commit()
-def sendToCSV():
-    with open('moves.csv', 'a') as csvfile:
-        csvWriter = csv.writer(csvfile, delimiter=',')
-        total = len(bins) + 2
-        max = 8
-        if total < max:
-            while total < max:
-                bins.append('')
-                total = total + 1
-        bins.append(sourceLocation)
-        bins.append(destinationLocation)
-        bins.append(cartNumber)
-        csvWriter.writerow(bins)
+def dbSetup():
+    #Check to see if new column for cartnumbers exist, if not add it, also check if Adams wipFL table exists, if not add it.
+    cursor.execute('PRAGMA table_info(empinfo);')
+    columnInfo = cursor.fetchall()
+    if  len(columnInfo) == 0:
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS empinfo (
+            empID TEXT)
+        ''')
+        print(Fore.YELLOW + Style.BRIGHT + "DB - Added empinfo table")
+    else:
+        #Clear out any existing entries
+        cursor.execute("DELETE FROM empinfo;")
+        db.commit()
+        print(Fore.GREEN + Style.BRIGHT + "DB - empinfo table OK and cleared")
+    cursor.execute('PRAGMA table_info(wipfl);')
+    columnInfo = cursor.fetchall()
+    if  len(columnInfo) == 0:
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS wipfl (
+            empID TEXT, FilledBinWeight TEXT, WipNum TEXT, ScanCode0 TEXT, ScanCode1 TEXT, ScanCode2 TEXT, ScaleIp TEXT, sourceLoc TEXT, destLoc TEXT, typeOfBin TEXT, timeEntered TEXT)
+        ''')
+        print(Fore.YELLOW + Style.BRIGHT + "DB - Added wipfl table")
+    else:
+        print(Fore.GREEN + Style.BRIGHT + "DB - wipfl table OK")
+    cursor.execute('PRAGMA table_info(moves);')
+    columnInfo = cursor.fetchall()
+    if  len(columnInfo) == 0:
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS moves (
+            date TEXT, bin1 INTEGER, bin2 INTEGER, bin3 INTEGER, bin4 INTEGER, source TEXT, destination TEXT, cart INTEGER)
+        ''')
+        print(Fore.YELLOW + Style.BRIGHT + "DB - Added moves table")
+    else:
+        lastColumn = columnInfo[-1][1]
+        if lastColumn != "cart":
+            cursor.execute('ALTER TABLE moves ADD COLUMN cart INTEGER')
+            print(Fore.YELLOW + Style.BRIGHT + "Added cart column to existing FloorLocation Database")
+        else:
+            print(Fore.GREEN + Style.BRIGHT + "DB - moves table OK")
+def logOut():
+    global cartNumber
+    global empID
+    global mainInput
+    global bins
+    global sourceLocation
+    global destinationLocation
+    global tempString
+    global cartNumber
+    global empID
+    mainInput = ""
+    bins = []
+    sourceLocation = ""
+    destinationLocation = ""
+    tempString = ""
+    cartNumber = 0
+    empID = 0
+    cursor.execute("DELETE FROM empinfo;")
+    db.commit()
+    mainFunction()
 try:
+    dbSetup()
     mainFunction()
 except KeyboardInterrupt:
     print(Fore.RED + "Exiting main program, goodbye!" + Style.RESET_ALL)
