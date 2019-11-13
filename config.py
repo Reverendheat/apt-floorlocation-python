@@ -7,8 +7,8 @@ try:
     Cart = cursor.fetchall()
     Employee = cursor.execute('SELECT empID FROM empinfo;')
     Employee = cursor.fetchall()
-except error:
-    print(error)
+except:
+    pass
 
 settings = {
     "Version" : "1.8.0",
