@@ -12,11 +12,13 @@ async def heartbeat(message, loop):
     writer.close()
 
 hostname = socket.gethostname()
+ip = socket.gethostbyname(hostname)
 message = {
     "hostname" : hostname,
     "version" : settings["Version"],
     "cart" : settings["Cart"],
-    "employee" : settings["Employee"]
+    "employee" : settings["Employee"],
+    "ip": ip
 }
 message = json.dumps(message)
 #message = hostname + ' is online! ' + settings["Version"] + " Cart: " + settings["Cart"] + " Employee: " + settings["Employee"]
