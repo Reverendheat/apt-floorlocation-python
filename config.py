@@ -8,7 +8,8 @@ try:
     Employee = cursor.execute('SELECT empID FROM empinfo;')
     Employee = cursor.fetchall()
 except:
-    pass
+    Cart = []
+    Employee = []
 
 settings = {
     "Version" : "1.8.0",
