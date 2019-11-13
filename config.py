@@ -8,7 +8,7 @@ try:
     Employee = cursor.execute('SELECT empID FROM empinfo;')
     Employee = cursor.fetchall()
 except error:
-    console.log(error)
+    print(error)
 
 settings = {
     "Version" : "1.8.0",
